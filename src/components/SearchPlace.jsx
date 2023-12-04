@@ -4,7 +4,7 @@ import { FaRegEdit, FaRegTrashAlt } from "react-icons/fa";
 const SearchPlace = () => {
   return (
     <>
-      <div className="flex flex-col justify-between px-16 pt-16 pb-9 mx-auto mt-[200px] mb-[200px] w-full max-w-[800px]">
+      <div className="flex flex-col justify-between px-16 pt-16 pb-9 mx-auto mt-[120px] w-full max-w-[800px]">
         <h2 className="text-[28px] pb-2 border-b font-bold text-white">
           Plan your next trip
         </h2>
@@ -31,7 +31,7 @@ const SearchPlace = () => {
           </button>
         </div>
       </div>
-      <div className="max-w-[800px] px-16 mx-auto mb-16">
+      <div className="max-w-[800px] px-16 mx-auto mt-[160px] mb-16">
         <h2 className="text-[28px] font-bold">Upcoming Tripzz</h2>
         <Link to="trip" className="flex rounded-[20px] border mt-8 h-24">
           <div className="min-w-[160px] h-full bg-cover bg-center bg-barcelona rounded-[20px]"></div>
