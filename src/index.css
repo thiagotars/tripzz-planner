@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --light-grey: hsl(0, 0%, 96%);
+  --medium-grey: hsl(0, 0%, 85%);
+  --dark-grey: hsl(0, 0%, 49%);
+  --very-dark-grey: hsl(0, 0%, 26%);
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+}
