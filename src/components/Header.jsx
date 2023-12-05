@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FiMenu } from "react-icons/fi";
+import SignupModal from "./SignupModal";
+import LoginModal from "./LoginModal";
 
 const Header = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isOpenMenu, setIsOpenMenu] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isSignMenu, setIsSignMenu] = useState(false);
+  const [showSignupContainer, setShowSignupContainer] = useState(false);
+  const [showLoginContainer, setShowLoginContainer] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -24,8 +27,8 @@ const Header = () => {
     setIsOpenMenu((prev) => !prev);
   };
   const handleSignClick = () => {
-    console.log(isSignMenu);
-    setIsSignMenu((prev) => !prev);
+    setShowLoginContainer(false);
+    setShowSignupContainer((prev) => !prev);
   };
   const navigate = useNavigate();
 
@@ -36,17 +39,24 @@ const Header = () => {
   };
 
   const handleLoginClick = () => {
+    setShowSignupContainer(false);
+    setShowLoginContainer((prev) => !prev);
+  };
+
+  const handleLog = () => {
     setIsLoggedIn(true);
+    setShowLoginContainer((prev) => !prev);
+    navigate("/user");
   };
 
   return (
     <header
-      className={`bg-medium-grey sticky z-50 top-0 w-screen flex justify-center py-4 md:px-20 px-8 ${
+      className={`bg-medium-grey sticky z-30 top-0 w-screen flex justify-center py-4 md:px-20 px-8 ${
         isScrolled &&
         "bg-white/80 backdrop-blur-sm shadow transition-all duration-300"
       }`}
     >
-      <nav className="relative flex max-w-[1120px] w-full justify-between text-[20px] items-center ">
+      <nav className="flex max-w-[1120px] w-full justify-between text-[20px] items-center ">
         {/* LOGO */}
         <Link className="flex items-center cursor-pointer" to="/">
           <div className="w-10 h-8 bg-logo bg-cover"></div>
@@ -107,38 +117,17 @@ const Header = () => {
           className="md:hidden w-8 h-8 text-dark-grey cursor-pointer"
           onClick={handleMenuClick}
         />
-        <div
-          className={`absolute top-20 right-1/2 bg-white max-w-[400px] p-12 text-center rounded-[20px] ${
-            isSignMenu ? "flex flex-col justify-center" : "hidden"
-          }`}
-        >
-          <h3 className="font-bold">
-            Sign up to take your trip planning to the next level
-          </h3>
-          <div className="mt-10 text-[.875em]">
-            <div className="px-8 py-6 rounded-full border bg-[#1877F2] hover:bg-[#4267B2] cursor-pointer"></div>
-            <div className="px-8 py-6 rounded-full border mt-2"></div>
-            <div className="mt-6 pt-6 border-t">
-              <input
-                type="text"
-                placeholder="Email"
-                className="w-full px-5 py-3 border rounded-full text-[.875em]"
-              />
-              <input
-                type="password"
-                placeholder="Password"
-                className="w-full px-5 py-3 border rounded-full text-[.875em] mt-2"
-              />
-              <button className="font-bold text-[.75em] hover:text-dark-grey mt-6">
-                Sign up with email
-              </button>
-              <button className="text-[.75em] mt-6 hover:text-dark-grey ">
-                Already have an account?{" "}
-                <span className="font-bold">Log in</span>
-              </button>
-            </div>
-          </div>
-        </div>
+        <LoginModal
+          isOpen={showLoginContainer}
+          changeModal={() => handleSignClick()}
+          onClose={() => setShowLoginContainer(false)}
+          onLogin={() => handleLog()}
+        />
+        <SignupModal
+          isOpen={showSignupContainer}
+          changeModal={() => handleLoginClick()}
+          onClose={() => setShowSignupContainer(false)}
+        />
       </nav>
     </header>
   );
