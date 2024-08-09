@@ -1,7 +1,48 @@
 import { createPortal } from "react-dom";
 import { FaXmark, FaGoogle, FaFacebookF } from "react-icons/fa6";
+import axios from "axios";
+import { useState, useContext } from "react";
+import { UserContext } from "../UserContext";
+import { Navigate } from "react-router-dom";
+import { useEffect } from "react";
+import React from "react";
 
 const SignupModal = ({ isOpen, onClose, changeModal }) => {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [redirect, setRedirect] = useState(false);
+  const [userData, setUserData] = useState(null);
+
+  const { setUser } = useContext(UserContext);
+
+  useEffect(() => {
+    if (userData) {
+      setRedirect(true);
+    }
+  }, [userData]);
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    try {
+      const { data } = await axios.post("/api/v1/auth/register", {
+        name,
+        email,
+        password,
+      });
+      setUserData(data); // Assign data to userData
+      setUser(data);
+      console.log(data.user);
+    } catch (error) {
+      // Handle registration failure
+      console.error("Registration failed:", error);
+    }
+  };
+
+  if (redirect && userData) {
+    return <Navigate to={`/user/${userData.user.id}/overview`} />;
+  }
+
   if (!isOpen) {
     return null;
   }
@@ -36,24 +77,33 @@ const SignupModal = ({ isOpen, onClose, changeModal }) => {
               or
             </p>
           </div>
-          <div className="mt-6">
+          <form className="mt-6" onSubmit={handleSubmit}>
             <input
               type="text"
               placeholder="Name"
+              value={name}
+              onChange={(event) => setName(event.target.value)}
               className="w-full px-5 py-3 border rounded-full text-[.8em]"
             />
             <input
               type="text"
               placeholder="Email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
               className="w-full px-5 py-3 border rounded-full text-[.8em] mt-2"
             />
             <input
               type="password"
               placeholder="Password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
               className="w-full px-5 py-3 border rounded-full text-[.8em] mt-2"
             />
             <div className="flex flex-col items-center mt-4">
-              <button className="font-bold text-[.875em] py-3 px-8 rounded-full hover:bg-light-grey">
+              <button
+                type="submit"
+                className="font-bold text-[.875em] py-3 px-8 rounded-full hover:bg-light-grey"
+              >
                 Sign up with email
               </button>
               <button
@@ -64,7 +114,7 @@ const SignupModal = ({ isOpen, onClose, changeModal }) => {
                 <span className="font-bold">Log in</span>
               </button>
             </div>
-          </div>
+          </form>
         </div>
       </div>
     </>,

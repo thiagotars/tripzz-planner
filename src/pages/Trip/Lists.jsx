@@ -1,111 +1,269 @@
-import { FaStar, FaCircle, FaPlus } from "react-icons/fa";
+import React, { useEffect, useState } from "react";
+import { FaSpinner } from "react-icons/fa";
+import PlaceCard from "../../components/PlaceCard";
+import { useOutletContext } from "react-router-dom";
+import { useAuth } from "../../AuthProvider";
+import ListMenu from "../../components/ListMenu";
+import api from "../../utils/api";
 import PlacesToVisit from "../../components/PlacesToVisit";
-import { data } from "../../data/data";
 
 const Lists = () => {
-  const listData = data[0].trip.lists;
-  const allLists = listData.map((list) => {
-    const allItems = list.items.map((item) => {
-      console.log(item.website);
-      return (
-        <li
-          key={item.id}
-          className="flex h-[7.5rem] w-full rounded-[1.25rem] border"
-        >
-          <div className="w-full px-6 py-4">
-            <div className="flex justify-between">
-              <h6 className="font-bold text-[.875em]">
-                <span className="font-normal">@ </span>
-                {item.name}
-              </h6>
-              <div className="flex items-center text-[.75em] gap-3 text-dark-grey">
-                <p>{item.type}</p>
-                <p>|</p>
-                <div className="flex gap-1 items-center">
-                  <p>{item.rating}</p>
-                  <FaStar />
-                </div>
-                {item.price && (
-                  <div className="flex gap-3">
-                    <p>|</p>
-                    <p>{item.price}</p>
-                  </div>
-                )}
-              </div>
-            </div>
-            <div className="h-full flex flex-col pt-7 text-[.75em] text-dark-grey">
-              <p>{item.address}</p>
-              <a
-                className="hover:text-black"
-                href={`https://${item.website}`}
-                target="_blank"
-                rel="noreferrer"
-              >
-                {item.website}
-              </a>
-            </div>
-          </div>
-          <div></div>
-          <div
-            className={`min-w-[11rem] h-full rounded-[1.25rem] ${item.image} bg-cover bg-no-repeat bg-center`}
-          ></div>
-        </li>
-      );
-    });
-    return (
-      <div key={list.id}>
-        <div className="flex items-center mt-14">
-          <FaCircle className="w-[.625rem]" />
-          <h5 className="mx-4">{list.title}</h5>
-          <hr className="w-full border-t" />
-        </div>
+  const { user } = useAuth();
+  const { tripData, setTripData } = useOutletContext();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [loadingPlace, setLoadingPlace] = useState(false);
+  const [selectedPlace, setSelectedPlace] = useState(null);
+  const [fetchError, setFetchError] = useState(null);
+  const [newListName, setNewListName] = useState("");
+  const [listFilter, setListFilter] = useState("all");
 
-        <ul className="flex flex-col gap-4 px-6 mt-6">{allItems}</ul>
-        <div className="flex gap-8 mt-10 px-6 h-10 justify-end">
-          <input
-            className="rounded-full text-[.875em] bg-light-grey px-6 py-2 focus: outline-none"
-            type="text"
-            name=""
-            id=""
-            placeholder="e.g. 'Kiosko'"
-          />
-          <button className="bg-black hover:bg-very-dark-grey w-[7.5rem] text-[.875em] font-bold text-white px-6 rounded-full">
-            Add Place
-          </button>
-        </div>
-      </div>
-    );
-  });
+  const handleSearchChange = async (event) => {
+    const searchValue = event.target.value;
+    setSearchTerm(searchValue);
+
+    if (searchValue.trim().length < 3) {
+      setSuggestions([]);
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await api.get("/api/v1/fetchPlaces", {
+        params: {
+          query: searchValue,
+          city: tripData.destination.city,
+        },
+      });
+
+      console.log(response.data.results);
+      if (response.status === 200) {
+        console.log("Suggestions fetched:", response.data.results);
+        setSuggestions(response.data.results || []);
+      } else {
+        throw new Error("Failed to fetch search suggestions");
+      }
+    } catch (error) {
+      console.error("Error fetching search suggestions:", error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCreateList = (list) => {
+    setTripData((prevTripData) => ({
+      ...prevTripData,
+      lists: [...(prevTripData.lists || []), list],
+    }));
+  };
+
+  const handleCreateListClick = async () => {
+    if (newListName.trim()) {
+      setLoading(true);
+      try {
+        const response = await api.post(`/api/v1/trips/${tripData._id}/lists`, {
+          name: newListName,
+          userId: user._id,
+        });
+
+        handleCreateList(response.data.list);
+        setNewListName("");
+        setListFilter("all");
+      } catch (error) {
+        console.error("Error creating list:", error.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
+  const handleSuggestionClick = async (place) => {
+    setSearchTerm(place.name);
+    setSuggestions([]);
+    try {
+      const response = await api.get(`/api/v1/fetchPlaces/details`, {
+        params: {
+          placeId: place.place_id,
+        },
+      });
+
+      if (response.status === 200) {
+        const detailedPlace = response.data.result;
+        console.log("Detailed Place:", detailedPlace);
+        setSelectedPlace(detailedPlace);
+      } else {
+        throw new Error("Failed to fetch detailed place information");
+      }
+    } catch (error) {
+      console.error(
+        "Error fetching detailed place information:",
+        error.message
+      );
+    }
+  };
+
+  const handleCreatePlace = async () => {
+    if (!selectedPlace) return;
+
+    setLoading(true);
+
+    const newPlace = {
+      dateTime: "",
+      list: null,
+      notes: "",
+      name: selectedPlace.name,
+      formatted_address: selectedPlace.formatted_address,
+      website: selectedPlace.website,
+      rating: selectedPlace.rating,
+      formatted_phone_number: selectedPlace.formatted_phone_number,
+      opening_hours: selectedPlace.opening_hours,
+      price_level: selectedPlace.price_level,
+      photos: selectedPlace.photos,
+      types: selectedPlace.types,
+      vicinity: selectedPlace.vicinity,
+      utc_offset: selectedPlace.utc_offset,
+      business_status: selectedPlace.business_status,
+      geometry: selectedPlace.geometry,
+      icon: selectedPlace.icon,
+      icon_background_color: selectedPlace.icon_background_color,
+      icon_mask_base_uri: selectedPlace.icon_mask_base_uri,
+      place_id: selectedPlace.place_id,
+      plus_code: selectedPlace.plus_code,
+      reference: selectedPlace.reference,
+      user_ratings_total: selectedPlace.user_ratings_total,
+      userId: user._id,
+      tripId: tripData._id,
+    };
+
+    try {
+      const response = await api.post("/api/v1/places", newPlace);
+
+      setTripData((prevTripData) => ({
+        ...prevTripData,
+        places: [...(prevTripData.places || []), response.data],
+      }));
+
+      setSelectedPlace(null);
+      setSearchTerm("");
+      setListFilter("all");
+    } catch (err) {
+      console.log(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <main className="flex flex-col w-[800px]">
-      <div className="pb-10 px-10">
-        <div>
-          <h2 className="text-[1.25em] font-bold">Your Lists</h2>
-          {allLists}
-        </div>
-        {/* New List */}
-        <div className="mt-24">
-          <div className="flex items-center font-bold">
-            <FaPlus className="w-[.625rem]" />
-            <h5 className="mx-4 min-w-[6.5rem]">Add New List</h5>
-            <hr className="w-full border-t" />
+    <main className="flex flex-col w-[800px] md:px-0 px-6">
+      <div className="mt-10">
+        <div className="flex flex-col sm:flex-row w-full mb-24 gap-6 justify-between p-0 sm:p-10 sm:py-6">
+          <div className="sm:w-1/2 w-full p-8 bg-light-grey rounded-[1.25rem]">
+            <h1 className="font-semibold text-very-dark-grey">Search places</h1>
+            <p className="text-medium-grey text-[.815em] max-w-[12rem] mt-2">
+              Find places you want to visit on your trip.
+            </p>
+
+            <div className="flex flex-col gap-4 mt-6">
+              <div className="relative">
+                <input
+                  type="text"
+                  className="rounded-full w-full h-10 py-2 px-6 text-[.875em] focus:outline-none bg-white"
+                  placeholder="Type a place"
+                  value={searchTerm}
+                  onChange={handleSearchChange}
+                />
+                {loading && (
+                  <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
+                    <FaSpinner className="animate-spin text-gray-400" />
+                  </div>
+                )}
+                {suggestions.length > 0 && (
+                  <ul className="absolute z-20 w-full bg-white border border-gray-300 rounded-md shadow-lg mt-1">
+                    {suggestions.map((suggestion) => (
+                      <li
+                        key={suggestion.place_id}
+                        className="px-4 py-2 cursor-pointer hover:bg-light-grey"
+                        onClick={() => handleSuggestionClick(suggestion)}
+                      >
+                        <div className="font-medium">{suggestion.name}</div>
+                        {suggestion.formatted_address && (
+                          <div className="text-gray-600 text-sm">
+                            {suggestion.formatted_address}
+                          </div>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+              <button
+                className="flex justify-center items-center cursor-pointer w-32 bg-very-dark-grey text-white h-10 rounded-full text-[.875em] hover:bg-dark-grey"
+                onClick={handleCreatePlace}
+                disabled={!selectedPlace || loading}
+              >
+                {loadingPlace ? (
+                  <FaSpinner className="animate-spin" />
+                ) : (
+                  "Add place"
+                )}
+              </button>
+            </div>
           </div>
-          <div className="flex gap-8 mt-10 px-6 h-10 justify-end">
-            <input
-              className="rounded-full text-[.875em] bg-light-grey px-6 py-2 focus: outline-none"
-              type="text"
-              name=""
-              id=""
-              placeholder="e.g. 'Museums'"
-            />
-            <button className="bg-black w-[7.5rem] text-[.875em] font-bold text-white px-6 rounded-full hover:bg-very-dark-grey">
-              Add List
-            </button>
+          <div className="sm:w-1/2 w-full p-8 bg-white rounded-[1.25rem]">
+            <h1 className="font-semibold text-very-dark-grey">Create list</h1>
+            <p className="text-medium-grey text-[.815em] max-w-[12rem] mt-2">
+              Create lists to organize your places by category.
+            </p>
+            <div className="flex flex-col gap-4 mt-6">
+              <div className="relative">
+                <input
+                  type="text"
+                  className="rounded-full w-full h-10 py-2 px-6 text-[.875em] focus:outline-none bg-light-grey"
+                  placeholder="e.g. Museums"
+                  value={newListName}
+                  onChange={(e) => setNewListName(e.target.value)}
+                />
+              </div>
+              <button
+                className="cursor-pointer w-32 bg-very-dark-grey text-white h-10 rounded-full text-[.875em] hover:bg-dark-grey"
+                onClick={handleCreateListClick}
+                disabled={!newListName.trim() || loading}
+              >
+                Create list
+              </button>
+            </div>
           </div>
         </div>
+
+        {fetchError && <div className="text-red-500 mb-4">{fetchError}</div>}
+        <ListMenu
+          lists={tripData.lists || []}
+          setListFilter={setListFilter}
+          listFilter={listFilter}
+        />
+        {tripData.places
+          .filter(
+            (place) =>
+              listFilter === "all" ||
+              (place.list && place.list._id === listFilter._id)
+          )
+          .map(
+            (place) =>
+              place && (
+                <PlaceCard
+                  key={place._id}
+                  place={place}
+                  tripDays={tripData.tripDays}
+                  componentName="list"
+                  listId={place.list ? place.list._id : "defaultListId"}
+                  eventId={null}
+                />
+              )
+          )}
       </div>
-      <PlacesToVisit />
+      <PlacesToVisit city={tripData.destination.city} />
     </main>
   );
 };

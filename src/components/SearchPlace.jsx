@@ -1,112 +1,416 @@
-import { Link } from "react-router-dom";
-import { FaRegEdit, FaRegTrashAlt } from "react-icons/fa";
+//  const handleStartDateClick = () => {
+import React, { useState } from "react";
+import api from "../utils/api";
+import { FaRegCalendar, FaSpinner } from "react-icons/fa";
+import Calendar from "../components/Calendar";
+import { cn } from "../utils/cn";
+import { useAuth } from "../AuthProvider"; // Adjust the import path as necessary
 
-const SearchPlace = () => {
+const SearchPlace = ({ fetchUserTrips }) => {
+  const { user } = useAuth(); // Use the useAuth hook to access user
+
+  const initialTripState = {
+    createdBy: user._id,
+    destination: {
+      city: "",
+      country: "",
+      capital: "",
+      population: "",
+      language: "",
+      flag: "",
+      currency: "",
+      image: "",
+      photos: "",
+      vicinity: "",
+      utc_offset: "",
+      geometry: "",
+      place_id: "",
+      continents: "",
+      capital: "",
+      timezones: "",
+    },
+    startDate: null,
+    endDate: null,
+  };
+
+  const [newTrip, setNewTrip] = useState(initialTripState);
+  const [suggestions, setSuggestions] = useState([]);
+  const [isStartDateOpen, setIsStartDateOpen] = useState(false);
+  const [isEndDateOpen, setIsEndDateOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isLoadingCityDetails, setIsLoadingCityDetails] = useState(false);
+  const [isCreatingTrip, setIsCreatingTrip] = useState(false);
+
+  const handleDestinationChange = async (event) => {
+    const input = event.target.value;
+    setNewTrip((prevState) => ({
+      ...prevState,
+      destination: { ...prevState.destination, city: input },
+    }));
+
+    if (input.length > 2) {
+      try {
+        const response = await fetch(
+          `/maps/api/place/autocomplete/json?input=${input}&key=${
+            import.meta.env.VITE_GOOGLE_API_KEY
+          }&language=en`
+        );
+
+        const data = await response.json();
+        setSuggestions(data.predictions);
+      } catch (error) {
+        console.error("Error fetching place suggestions:", error);
+      }
+    } else {
+      setSuggestions([]);
+    }
+  };
+
+  const fetchPlaceDetails = async (placeId) => {
+    setIsLoadingCityDetails(true); // Start loading indicator
+    try {
+      // if (!token) {
+      //   console.error("No token found");
+      //   return null;
+      // }
+
+      const response = await api.get(`/api/v1/fetchPlaces/details`, {
+        params: {
+          placeId: placeId,
+        },
+      });
+      // console.log(response.data.result);
+      return response.data.result;
+    } catch (error) {
+      console.error("Error fetching place details:", error);
+      // Handle error as needed
+      throw error;
+    } finally {
+      setIsLoadingCityDetails(false); // Stop loading indicator
+    }
+  };
+
+  const fetchPopulationData = async (city, country) => {
+    console.log("Fetching population data for:", city, country);
+    try {
+      const response = await fetch(
+        `http://api.geonames.org/searchJSON?q=${city}&country=&maxRows=1&username=thiagotarsitano`
+      );
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const data = await response.json();
+      if (data.geonames && data.geonames.length > 0) {
+        const population = data.geonames[0].population;
+        console.log("Population data:", population);
+        return population;
+      } else {
+        console.error("No population data found for:", city, country);
+        return 0;
+      }
+    } catch (error) {
+      console.error("Error fetching population data:", error);
+      return 0;
+    }
+  };
+
+  const fetchCountryData = async (country) => {
+    console.log(country);
+    try {
+      const response = await fetch(
+        `https://restcountries.com/v3.1/name/${country}`
+      );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const data = await response.json();
+      const countryData = data[0];
+      console.log(countryData);
+
+      const formattedCurrency = Object.keys(countryData.currencies || {}).map(
+        (code) => {
+          const { name, symbol } = countryData.currencies[code];
+          return {
+            code,
+            name,
+            symbol,
+          };
+        }
+      );
+      console.log(formattedCurrency);
+      return {
+        language: Object.values(countryData.languages)[0],
+        currency: formattedCurrency,
+        flag: countryData.flag,
+        continents: countryData.continents,
+        capital: countryData.capital,
+        timezones: countryData.timezones,
+      };
+    } catch (error) {
+      console.error("Error fetching country data:", error);
+    }
+  };
+
+  const fetchImageFromUnsplash = async (city) => {
+    try {
+      const response = await fetch(
+        `https://api.unsplash.com/search/photos?query=${city}&client_id=${
+          import.meta.env.VITE_UNSPLASH_ACCESS_KEY
+        }`
+      );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const data = await response.json();
+      return data.results[0]?.urls?.regular || "";
+    } catch (error) {
+      console.error("Error fetching image from Unsplash:", error);
+      return "";
+    }
+  };
+
+  const extractCityAndCountry = (address) => {
+    const tempElement = document.createElement("div");
+    tempElement.innerHTML = address;
+
+    // Extract the locality and country-name
+    const localityElement = tempElement.querySelector(".locality");
+    const countryElement = tempElement.querySelector(".country-name");
+
+    const locality = localityElement ? localityElement.textContent.trim() : "";
+    const country = countryElement ? countryElement.textContent.trim() : "";
+
+    return { city: locality, country: country };
+  };
+
+  const handleSuggestionSelect = async (suggestion) => {
+    console.log(suggestion);
+    setSuggestions([]);
+    const placeDetails = await fetchPlaceDetails(suggestion.place_id);
+
+    const city = suggestion.terms[0].value;
+    const country = suggestion.terms[suggestion.terms.length - 1].value;
+
+    const population = await fetchPopulationData(city, country);
+    const countryData = await fetchCountryData(country);
+    const unsplashImage = await fetchImageFromUnsplash(city);
+
+    const { city: fetchedCity, country: fetchedCountry } =
+      extractCityAndCountry(placeDetails.adr_address);
+
+    setNewTrip((prevState) => ({
+      ...prevState,
+      destination: {
+        city: fetchedCity || placeDetails.name,
+        country: country,
+        capital: countryData.capital,
+        population: population,
+        language: countryData.language,
+        flag: countryData.flag,
+        currency: countryData.currency,
+        image: unsplashImage,
+        photos: placeDetails.photos,
+        vicinity: placeDetails.vicinity,
+        utc_offset: placeDetails.utc_offset,
+        geometry: placeDetails.geometry,
+        place_id: placeDetails.place_id,
+        continents: countryData.continents,
+        timezones: countryData.timezones,
+      },
+    }));
+  };
+
+  const handleCreateTrip = async () => {
+    if (!newTrip.startDate || !newTrip.endDate) {
+      setErrorMessage("Start and end dates are required.");
+      return;
+    }
+
+    if (!newTrip.destination.city) {
+      setErrorMessage("Please select a destination.");
+      return;
+    }
+
+    if (newTrip.endDate <= newTrip.startDate) {
+      setErrorMessage("End date must be after start date.");
+      return; // Added return here to stop further execution
+    }
+
+    setIsCreatingTrip(true); // Start creating trip loading indicator
+
+    try {
+      const response = await api.post("/api/v1/trips", newTrip);
+
+      console.log("Trip created:", response.data);
+      fetchUserTrips();
+      resetForm();
+    } catch (error) {
+      if (error.response) {
+        console.error("Error response data:", error.response.data);
+        setErrorMessage(error.response.data.error || "Failed to create trip.");
+      } else if (error.request) {
+        console.error("No response received:", error.request);
+        setErrorMessage("No response from server. Please try again.");
+      } else {
+        console.error("Error in request setup:", error.message);
+        setErrorMessage("Error in request setup.");
+      }
+    } finally {
+      setIsCreatingTrip(false); // Stop creating trip loading indicator
+    }
+  };
+
+  const resetForm = () => {
+    setNewTrip(initialTripState);
+    setSuggestions([]);
+    setErrorMessage("");
+  };
+
+  const handleStartDateClick = () => {
+    setIsEndDateOpen(false);
+
+    setIsEndDateOpen(false);
+    setIsStartDateOpen((prevState) => !prevState);
+  };
+
+  const handleEndDateClick = () => {
+    setIsStartDateOpen(false);
+    setIsEndDateOpen((prevState) => !prevState);
+  };
+
+  const handleStartDateSelect = (date) => {
+    setNewTrip((prevState) => ({ ...prevState, startDate: date }));
+    setIsStartDateOpen(false);
+  };
+
+  const handleEndDateSelect = (date) => {
+    setNewTrip((prevState) => ({ ...prevState, endDate: date }));
+    setIsEndDateOpen(false);
+  };
+
+  const setFormattedDate = (date) => {
+    const { $D, $M, $y } = date;
+    const formattedDate = `${$y}-${$M + 1}-${$D}`;
+    return formattedDate;
+  };
+
   return (
-    <>
-      <div className="flex flex-col justify-between px-16 pt-16 pb-9 mx-auto mt-[120px] w-full max-w-[800px]">
-        <h2 className="text-[28px] pb-2 border-b font-bold text-white">
-          Plan your next trip
-        </h2>
-        <div className="flex justify-between mt-8 text-[14px]">
-          <div>
+    <div className="sm:px-16 sm:mt-24 mb-20 sm:mb-40 px-6 flex flex-col justify-between pt-10 pb-9 mx-auto mt-[72px] w-full max-w-[800px]">
+      <h2 className="lg:text-[1.75em] sm:text-[1.5em] text-[1.25em] pb-1 border-b border-medium-grey font-bold text-very-dark-grey">
+        Plan your next trip
+      </h2>
+      <div className="flex flex-col justify-between mt-8 text-[14px]">
+        <div className="sm:flex-row md:items-center flex flex-col items-start gap-4 w-full">
+          <div className="relative md:w-1/2 w-full">
             <input
-              className="py-3 px-4 rounded-full max-w-[200px]"
               type="text"
-              placeholder="e.g 'Barcelona'"
+              onChange={handleDestinationChange}
+              placeholder="Where to? e.g. Barcelona"
+              className="2xl:text-[1em] xs:px-6 text-[.875em] w-full py-3 px-4 rounded-full focus:outline-none placeholder:text-medium-grey text-very-dark-grey"
+              value={newTrip.destination.city}
             />
-            <input
-              className="py-3 px-4 rounded-full max-w-[104px] ml-4 text-center"
-              type="text"
-              placeholder="Start Date"
-            />
-            <input
-              className="py-3 px-4 rounded-full max-w-[104px] ml-4 text-center"
-              type="text"
-              placeholder="End Date"
-            />
+            {isLoadingCityDetails && (
+              <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
+                <FaSpinner className="animate-spin text-gray-400" />
+              </div>
+            )}
+            {suggestions.length > 0 && (
+              <ul className="absolute z-10 w-full bg-white border rounded-md shadow-lg">
+                {suggestions.map((suggestion) => (
+                  <li
+                    key={suggestion.place_id}
+                    className="px-4 py-2 cursor-pointer hover:bg-gray-200"
+                    onClick={() => handleSuggestionSelect(suggestion)}
+                  >
+                    {suggestion.description}
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
-          <button className="bg-black py-3 px-4 rounded-full text-white min-w-[160px] font-bold">
-            Letzz Go!
+          <div className="relative md:w-1/2 w-full flex bg-white rounded-full">
+            <button
+              onClick={handleStartDateClick}
+              className={cn(
+                isStartDateOpen
+                  ? "text-very-dark-grey hover:text-dark-grey"
+                  : newTrip.startDate
+                  ? "text-very-dark-grey"
+                  : "text-medium-grey",
+                "xs:px-6 w-1/2 flex items-center justify-between py-3 px-4"
+              )}
+            >
+              <p className={cn("2xl:text-[1em] text-[.875em]")}>
+                {newTrip.startDate
+                  ? `${setFormattedDate(newTrip.startDate)}`
+                  : "Start Date"}
+              </p>
+              <FaRegCalendar />
+            </button>
+            <div className="border-l border-light-grey"></div>
+            <button
+              onClick={handleEndDateClick}
+              className={cn(
+                isEndDateOpen
+                  ? "text-very-dark-grey hover:text-dark-grey"
+                  : newTrip.endDate
+                  ? "text-very-dark-grey"
+                  : "text-medium-grey",
+                "xs:px-6 w-1/2 flex items-center justify-between py-3 px-4"
+              )}
+            >
+              <p className="2xl:text-[1em] text-[.875em]">
+                {newTrip.endDate
+                  ? `${setFormattedDate(newTrip.endDate)}`
+                  : "End Date"}
+              </p>
+              <FaRegCalendar />
+            </button>
+            {isStartDateOpen && (
+              <Calendar
+                onDateSelect={handleStartDateSelect}
+                date={newTrip.startDate}
+                setIsStartDateOpen={setIsStartDateOpen}
+                setIsEndDateOpen={setIsEndDateOpen}
+                newTrip={newTrip}
+              />
+            )}
+            {isEndDateOpen && (
+              <Calendar
+                onDateSelect={handleEndDateSelect}
+                date={newTrip.endDate}
+                setIsStartDateOpen={setIsStartDateOpen}
+                setIsEndDateOpen={setIsEndDateOpen}
+                newTrip={newTrip}
+              />
+            )}
+          </div>
+        </div>
+        <div className="flex gap-6 items-center mt-6">
+          <button
+            className={cn(
+              "bg-very-dark-grey py-3 px-4 rounded-full text-white font-bold w-[200px] flex justify-center items-center hover:bg-dark-grey",
+              isCreatingTrip ? "opacity-50 cursor-not-allowed" : ""
+            )}
+            onClick={handleCreateTrip}
+            disabled={isCreatingTrip}
+          >
+            {isCreatingTrip ? (
+              <div className="flex items-center justify-center h-5 w-5">
+                <FaSpinner className="animate-spin text-white" />
+              </div>
+            ) : (
+              "Letzz Go!"
+            )}
           </button>
+          {errorMessage && (
+            <div className="text-red-500 text-sm">{errorMessage}</div>
+          )}
         </div>
       </div>
-      <div className="max-w-[800px] px-16 mx-auto mt-[160px] mb-16">
-        <h2 className="text-[28px] font-bold">Upcoming Tripzz</h2>
-        <Link to="trip" className="flex rounded-[20px] border mt-8 h-24">
-          <div className="min-w-[160px] h-full bg-cover bg-center bg-barcelona rounded-[20px]"></div>
-          <div className="flex justify-between w-full px-8">
-            <div className="flex flex-col justify-center py-auto">
-              <h3 className="font-bold text-[.875em]">Barcelona - Spain</h3>
-              <p className="text-[14px] mt-1">24th-27th, July 2024</p>
-            </div>
-            <div className="flex">
-              <button className="flex justify-center items-center">
-                <FaRegEdit className="w-[1.25rem] h-[1.25rem] ml-[2px] mb-[2px] text-dark-grey" />
-              </button>
-              <button className="flex justify-center items-center ml-8">
-                <FaRegTrashAlt className="w-[1.25rem] h-[1.25rem] mb-[2px] text-dark-grey" />
-              </button>
-            </div>
-          </div>
-        </Link>
-        <div className="flex rounded-[20px] border mt-8 h-24">
-          <div className="min-w-[160px] h-full bg-cover bg-center bg-paraty rounded-[20px]"></div>
-          <div className="flex justify-between w-full px-8">
-            <div className="flex flex-col justify-center">
-              <h3 className="font-bold text-[.875em]">Paraty - Brasil</h3>
-              <p className="text-[14px] mt-1">14th-19th, August 2024</p>
-            </div>
-            <div className="flex">
-              <button className="flex justify-center items-center">
-                <FaRegEdit className="w-[1.25rem] h-[1.25rem] ml-[2px] mb-[2px] text-dark-grey" />
-              </button>
-              <button className="flex justify-center items-center ml-8">
-                <FaRegTrashAlt className="w-[1.25rem] h-[1.25rem] mb-[2px] text-dark-grey" />
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <h2 className="text-[28px] font-bold mt-20">Past Tripzz</h2>
-        <div className="flex rounded-[20px] border mt-8 h-24">
-          <div className="min-w-[160px] h-full bg-cover bg-center bg-amsterdam rounded-[20px]"></div>
-          <div className="flex justify-between w-full px-8">
-            <div className="flex flex-col justify-center">
-              <h3 className="font-bold text-[.875em]">
-                Amsterdam - Netherlands
-              </h3>
-              <p className="text-[14px] mt-1">24th-27th, July 2023</p>
-            </div>
-            <div className="flex">
-              <button className="flex justify-center items-center">
-                <FaRegEdit className="w-[1.25rem] h-[1.25rem] ml-[2px] mb-[2px] text-dark-grey" />
-              </button>
-              <button className="flex justify-center items-center ml-8">
-                <FaRegTrashAlt className="w-[1.25rem] h-[1.25rem] mb-[2px] text-dark-grey" />
-              </button>
-            </div>
-          </div>
-        </div>
-        <div className="flex rounded-[20px] border mt-8 h-24">
-          <div className="min-w-[160px] h-full bg-cover bg-center bg-sicilia rounded-[20px]"></div>
-          <div className="flex justify-between w-full px-8">
-            <div className="flex flex-col justify-center">
-              <h3 className="font-bold text-[.875em]">Sicily - Italy</h3>
-              <p className="text-[14px] mt-1">14th-19th, August 2023</p>
-            </div>
-            <div className="flex">
-              <button className="flex justify-center items-center">
-                <FaRegEdit className="w-[1.25rem] h-[1.25rem] ml-[2px] mb-[2px] text-dark-grey" />
-              </button>
-              <button className="flex justify-center items-center ml-8">
-                <FaRegTrashAlt className="w-[1.25rem] h-[1.25rem] mb-[2px] text-dark-grey" />
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </>
+    </div>
   );
 };
 

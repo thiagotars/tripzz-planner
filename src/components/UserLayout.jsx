@@ -1,10 +1,15 @@
-import { Outlet } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Outlet, useParams } from "react-router-dom";
 
 const UserLayout = () => {
+  const { userId } = useParams();
+
+  console.log(userId);
+
+  // console.log(userTrips);
   return (
     <>
-      <div className="absolute top-0 w-screen h-[484px] bg-medium-grey -z-10"></div>
-      <Outlet />
+      <Outlet context={{ userId }} />
     </>
   );
 };

@@ -1,23 +1,35 @@
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import { useState } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
-const Carousel = (props) => {
-  const itinerary = props.data;
+const Carousel = ({ days, tripData }) => {
+  // console.log(days);
+  console.log(tripData);
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const handleNextClick = () => {
-    const nextIndex = (currentIndex + 1) % itinerary.length;
+    const nextIndex = (currentIndex + 1) % days.length;
     setCurrentIndex(nextIndex);
   };
 
   const handlePrevClick = () => {
-    const prevIndex =
-      currentIndex === 0 ? itinerary.length - 1 : currentIndex - 1;
+    const prevIndex = currentIndex === 0 ? days.length - 1 : currentIndex - 1;
     setCurrentIndex(prevIndex);
   };
 
-  const itineraryDays = itinerary.map((day, index) => {
+  function getTimeFromDate(date) {
+    if (!(date instanceof Date) || isNaN(date)) {
+      return "Invalid Date";
+    }
+
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+
+    return `${hours}:${minutes}`;
+  }
+
+  const tripDays = days.map((day, index) => {
+    console.log(day);
     const daysOfWeek = [
       "Sunday",
       "Monday",
@@ -27,20 +39,35 @@ const Carousel = (props) => {
       "Friday",
       "Saturday",
     ];
+
+    const daysOfMonth = (day) => {
+      let dayOfMonth = day.date.getDate(); // Get the day of the month
+
+      if (dayOfMonth % 10 === 1 && dayOfMonth !== 11) {
+        return "st";
+      } else if (dayOfMonth % 10 === 2 && dayOfMonth !== 12) {
+        return "nd";
+      } else if (dayOfMonth % 10 === 3 && dayOfMonth !== 13) {
+        return "rd";
+      } else {
+        return "th";
+      }
+    };
+
     return (
       <div
-        key={day.id}
+        key={day._id}
         style={{ display: index === currentIndex ? "block" : "none" }}
-        className="w-full border p-6 rounded-[1.25rem]"
+        className="flex flex-col items-between w-full sm:w-1/2 bg-light-grey p-8 rounded-[1.25rem]"
       >
-        <div className="flex justify-between">
+        <div className="flex justify-between text-very-dark-grey">
           <h4 className="font-normal">
             {daysOfWeek[day.date.getDay()] + ", "}
-            <span className="font-bold text-[1.25em]">
-              {day.date.getUTCDate()}
+            <span className="font-semibold">
+              {day.date ? day.date.getUTCDate() + daysOfMonth(day) : ""}
             </span>
           </h4>
-          <div className="flex gap-2 text-black items-center">
+          <div className="flex gap-2 text-very-dark-grey items-center">
             {currentIndex === 0 ? (
               <FaChevronLeft className="disabled cursor-pointer w-4 h-4" />
             ) : (
@@ -49,7 +76,7 @@ const Carousel = (props) => {
                 onClick={handlePrevClick}
               />
             )}
-            {currentIndex === itinerary.length - 1 ? (
+            {currentIndex === days.length - 1 ? (
               <FaChevronRight className="disabled cursor-pointer w-4 h-4" />
             ) : (
               <FaChevronRight
@@ -59,44 +86,47 @@ const Carousel = (props) => {
             )}
           </div>
         </div>
-        <Link className="h-full flex flex-col gap-2 pt-6 pb-4" to="itinerary">
-          {day.events.length ? (
-            day.events.map((event) => {
-              return (
+        <Link
+          className=""
+          to={`/user/${tripData.createdBy}/trips/${tripData._id}/itinerary`}
+        >
+          <div className="flex flex-1 flex-col gap-4 max-h-36 mt-6 overflow-scroll">
+            {day.places.length > 0 ? (
+              day.places.map((place) => (
                 <div
-                  key={event.id}
+                  key={place._id}
                   className="flex justify-between items-center"
                 >
                   <div className="flex items-center">
-                    <div
-                      className={`w-12 h-12 rounded-full ${event.image} bg-cover`}
-                    ></div>
-                    <h4 className="text-[0.875em]">
-                      <span className="mr-1 ml-4 pb-1 font-normal">@</span>
-                      {event.title}
-                    </h4>
+                    <div className="text-[.75em] text-very-dark-grey">
+                      {place.dateTime
+                        ? getTimeFromDate(new Date(place.dateTime))
+                        : "00:00"}
+                    </div>
+                    <div className=" flex w-full">
+                      <h4 className="text-[0.875em] ml-3">
+                        <span className="mr-1">@</span>
+                        {place.name}
+                      </h4>
+                    </div>
                   </div>
-                  <p className="w-[2rem] mr-3 text-[0.875em] text-dark-grey">
-                    {event.time}
-                  </p>
                 </div>
-              );
-            })
-          ) : (
-            <p className="text-[0.875em] h-full pt-6 text-center">
-              Add your fist place
-            </p>
-          )}
+              ))
+            ) : (
+              <p className="text-[0.875em] pb-16 max-w-[12rem] text-dark-grey">
+                Add places to your itinerary by{" "}
+                <span className="font-semibold"> clicking here</span>
+              </p>
+            )}
+          </div>
         </Link>
       </div>
     );
   });
 
-  return (
-    <div className="w-full flex gap-6 min-h-[20rem]" to="itinerary">
-      {itineraryDays}
-    </div>
-  );
+  console.log(tripDays);
+
+  return <>{tripDays}</>;
 };
 
 export default Carousel;

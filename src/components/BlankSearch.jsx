@@ -1,3 +1,5 @@
+import React from "react";
+
 const BlankSearch = () => {
   return (
     <div className="flex flex-col px-16 pt-16 pb-7 mx-auto mt-[240px] mb-[160px] h-[424px] w-full max-w-[800px] rounded-[25px] -bottom-[104px] bg-white shadow-md">

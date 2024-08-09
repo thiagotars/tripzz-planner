@@ -1,8 +1,10 @@
+import React from "react";
+
 const Features = () => {
   return (
-    <section className="2xl:px-[280px] xl:px-[200px] sm:px-[80px] px-6 mt-14 pb-[120px]">
+    <section className="2xl:px-[280px] xl:px-[200px] md:mt-14 md:pb-[160px] sm:px-[80px] sm:mt-8 mt-0 px-6 pb-[120px]">
       <main className="2xl:mx-20 mx-0 text-center">
-        <h4 className="lg:text-[2em] sm:text-[1.5em] text-[1.25em] font-bold">
+        <h4 className="lg:text-[1.75em] sm:text-[1.5em] text-[1.25em] font-bold">
           Our main features
         </h4>
         <div className="flex flex-col md:flex-row md:gap-12 gap-16 mt-8 xs:mt-12">

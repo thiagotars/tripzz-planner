@@ -1,17 +1,19 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import {
   IoSettingsOutline,
   IoLogOutOutline,
   IoHomeOutline,
 } from "react-icons/io5";
+import { useAuth } from "../AuthProvider";
 
 const UserMenu = ({ logged, logout }) => {
   const menuRef = useRef();
   const imageRef = useRef();
-
+  const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
 
+  console.log(user);
   const toggleMenu = () => {
     setIsOpen((prev) => !prev);
   };
@@ -23,16 +25,16 @@ const UserMenu = ({ logged, logout }) => {
       }
     });
   }
-
+  // console.log(user);
   return (
     <div className="relative flex items-center">
       <div className="flex items-center">
-        <p className="md:flex hidden font-semibold text-[.65em] text-dark-grey">
-          <span className="font-normal mr-1">Welcome,</span> User
+        <p className="sm:flex hidden font-semibold text-[.75em] text-very-dark-grey">
+          <span className="font-normal mr-1">Welcome,</span> {user.name}
         </p>
         <button
           ref={imageRef}
-          className="w-10 h-10 bg-user bg-contain ml-6 rounded-full hover:shadow-lg"
+          className="w-8 h-8 bg-user bg-contain ml-6 rounded-full hover:shadow-lg"
           onClick={toggleMenu}
         ></button>
       </div>
@@ -44,7 +46,7 @@ const UserMenu = ({ logged, logout }) => {
           <div className="user-menu flex flex-col text-[.75em] w-full text-start gap-4">
             <Link
               className="py-3 px-8 rounded-full cursor-pointer hover:bg-light-grey"
-              to="user"
+              to={`user/${user._id}`}
             >
               <div className="flex items-center justify-start">
                 <IoHomeOutline />
@@ -53,7 +55,7 @@ const UserMenu = ({ logged, logout }) => {
             </Link>
             <Link
               className="py-3 px-8  rounded-full cursor-pointer hover:bg-light-grey"
-              to="settings"
+              to="/user/settings"
             >
               <div className="flex items-center justify-start">
                 <IoSettingsOutline />

@@ -2,11 +2,11 @@
 // import AddNewPlace from "../../components/AddNewPlace";
 // import { useEffect, useRef, useState } from "react";
 import PlacesToVisit from "../../components/PlacesToVisit";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { data } from "../../data/data";
 
 const Notes = () => {
-  const notesData = data[0].trip.notes.content;
+  const notesData = data[0].user[0].trip.notes.content;
   const [value, setValue] = useState("");
 
   const textAreaRef = useRef(null);

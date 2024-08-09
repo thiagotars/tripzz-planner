@@ -1,247 +1,137 @@
-<!-- Improved compatibility of back to top link: See: https://github.com/othneildrew/Best-README-Template/pull/73 -->
-<a name="readme-top"></a>
-<!--
-*** Thanks for checking out the Best-README-Template. If you have a suggestion
-*** that would make this better, please fork the repo and create a pull request
-*** or simply open an issue with the tag "enhancement".
-*** Don't forget to give the project a star!
-*** Thanks again! Now go create something AMAZING! :D
--->
+# Frontend Mentor - Blogr landing page solution
 
+## Table of contents
 
+- [Overview](#overview)
+  - [The project](#the-project)
+  - [Key features](#key-features)
+  - [Screenshot](#screenshot)
+  <!-- - [Links](#links) -->
+- [Built with](#built-with)
 
-<!-- PROJECT SHIELDS -->
-<!--
-*** I'm using markdown "reference style" links for readability.
-*** Reference links are enclosed in brackets [ ] instead of parentheses ( ).
-*** See the bottom of this document for the declaration of the reference variables
-*** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
-*** https://www.markdownguide.org/basic-syntax/#reference-style-links
--->
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![MIT License][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
+- [Getting started](#getting-started)
 
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+  - [Environment setup](#environment-setup)
 
+- [Running the application](#running-the-application)
+- [Continued development](#continued-development)
+- [Author](#author)
 
-<!-- PROJECT LOGO -->
-<br />
-<div align="center">
-  <a href="https://github.com/github_username/repo_name">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
-  </a>
+## Overview
 
-<h3 align="center">project_title</h3>
+### The project
 
-  <p align="center">
-    project_description
-    <br />
-    <a href="https://github.com/github_username/repo_name"><strong>Explore the docs »</strong></a>
-    <br />
-    <br />
-    <a href="https://github.com/github_username/repo_name">View Demo</a>
-    ·
-    <a href="https://github.com/github_username/repo_name/issues">Report Bug</a>
-    ·
-    <a href="https://github.com/github_username/repo_name/issues">Request Feature</a>
-  </p>
-</div>
+This is a MERN stack application designed to help users plan their trips efficiently. Users can securely log in to access their personalized travel itineraries. The app leverages the Google Places API to provide relevant location data, enhancing the overall planning experience.
 
+### Key features
 
+- Secure user authentication and authorization
+- Intuitive interface for creating and managing travel plans
+- Comprehensive budget management tools
+- Integration with Google Places API for location data
+- Robust backend with Node.js, Express, and MongoDB
 
-<!-- TABLE OF CONTENTS -->
-<details>
-  <summary>Table of Contents</summary>
-  <ol>
-    <li>
-      <a href="#about-the-project">About The Project</a>
-      <ul>
-        <li><a href="#built-with">Built With</a></li>
-      </ul>
-    </li>
-    <li>
-      <a href="#getting-started">Getting Started</a>
-      <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
-      </ul>
-    </li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#license">License</a></li>
-    <li><a href="#contact">Contact</a></li>
-    <li><a href="#acknowledgments">Acknowledgments</a></li>
-  </ol>
-</details>
+### Screenshot
 
+![Desktop](./screenshots/desktop-screenshot.png)
 
+![Mobile](./screenshots/mobile-screenshot.png)
 
-<!-- ABOUT THE PROJECT -->
-## About The Project
+<!-- ### Links
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
+- Solution URL: [Add solution URL here](https://your-solution-url.com)
+- Live Site URL: [Add live site URL here](https://your-live-site-url.com) -->
 
-Here's a blank template to get started: To avoid retyping too much info. Do a search and replace with your text editor for the following: `github_username`, `repo_name`, `twitter_handle`, `linkedin_username`, `email_client`, `email`, `project_title`, `project_description`
+## Built with
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+- HTML5
+- Javascript
+- Tailwind CSS
+- Node.js, Express
+- MongoDB
+- React JS
+- Google Places API
+- JWT
 
-
-
-### Built With
-
-* [![Next][Next.js]][Next-url]
-* [![React][React.js]][React-url]
-* [![Vue][Vue.js]][Vue-url]
-* [![Angular][Angular.io]][Angular-url]
-* [![Svelte][Svelte.dev]][Svelte-url]
-* [![Laravel][Laravel.com]][Laravel-url]
-* [![Bootstrap][Bootstrap.com]][Bootstrap-url]
-* [![JQuery][JQuery.com]][JQuery-url]
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
-<!-- GETTING STARTED -->
 ## Getting Started
-
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
 
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
-* npm
-  ```sh
-  npm install npm@latest -g
-  ```
+- Node.js and npm (or yarn) installed
+- A MongoDB account
+- A Google Places API key
 
 ### Installation
 
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
-   ```sh
-   git clone https://github.com/github_username/repo_name.git
-   ```
-3. Install NPM packages
-   ```sh
-   npm install
-   ```
-4. Enter your API in `config.js`
-   ```js
-   const API_KEY = 'ENTER YOUR API';
-   ```
+**1. Clone the repository:**
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+git clone [https://github.com/thiagotars/tripzz-planner.git](https://github.com/thiagotars/tripzz-planner.git)
 
+**2. Navigate into the project directory:**
 
+cd tripzz-planner
 
-<!-- USAGE EXAMPLES -->
-## Usage
+**3. Install dependencies:**
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+npm install
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+### Environment Setup
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+**Important:** This project utilizes two separate .env files to manage environment variables.
 
+1. Create a file named .env at the root of the project (tripzz-planner). This file will store frontend-related environment variables.
+2. Create another .env file inside the backend folder. This file will store backend-specific environment variables.
 
+Example .env files:
 
-<!-- ROADMAP -->
-## Roadmap
+/tripzz-planner/.env:
 
-- [ ] Feature 1
-- [ ] Feature 2
-- [ ] Feature 3
-    - [ ] Nested Feature
+VITE_GOOGLE_API_KEY=YOUR_GOOGLE_API_KEY
+VITE_UNSPLASH_ACCESS_KEY=YOUR_UNSPLASH_ACCESS_KEY
 
-See the [open issues](https://github.com/github_username/repo_name/issues) for a full list of proposed features (and known issues).
+/tripzz-planner/backend/.env:
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+MONGO_URI=YOUR_MONGODB_CONNECTION_STRING
+JWT_SECRET=YOUR_JWT_SECRET
+JWT_LIFETIME=YOUR_JWT_LIFETIME
+GOOGLE_API_KEY=YOUR_GOOGLE_API_KEY
 
+**Remember to replace the placeholders with your actual values.**
 
+## Running the app
 
-<!-- CONTRIBUTING -->
-## Contributing
+1. **Start the backend server:**
+   Open a new terminal window and navigate to the backend directory.
 
-Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+   node index.js
 
-If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
-Don't forget to give the project a star! Thanks again!
+2. **Start the frontend development server:**
+   In a separate terminal window, stay in the root project directory and run:
 
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+   npm run dev
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+Your app should be accessible at http://localhost:3000
 
+**Important Note:**
 
+    For development purposes, you can use the following temporary credentials:
 
-<!-- LICENSE -->
-## License
+    Username: thiago@gmail.com
+    Password: 123456
 
-Distributed under the MIT License. See `LICENSE.txt` for more information.
+## Continued development
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+I am currently focused on implementing a robust user authentication and authorization system to enhance security and privacy. Once complete, users will be again able to create their own accounts and securely manage their travel plans.
 
+In parallel, we are committed to improving the overall user experience by:
 
+    Enhancing UI/UX: Implementing smoother page transitions and visually appealing loading states.
+    Expanding features: Introducing collaborative features that allow users to share and plan trips together.
 
-<!-- CONTACT -->
-## Contact
+These enhancements will contribute to a more enjoyable and efficient travel planning experience.
 
-Your Name - [@twitter_handle](https://twitter.com/twitter_handle) - email@email_client.com
+## Author
 
-Project Link: [https://github.com/github_username/repo_name](https://github.com/github_username/repo_name)
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
-<!-- ACKNOWLEDGMENTS -->
-## Acknowledgments
-
-* []()
-* []()
-* []()
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
-<!-- MARKDOWN LINKS & IMAGES -->
-<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/github_username/repo_name.svg?style=for-the-badge
-[contributors-url]: https://github.com/github_username/repo_name/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/github_username/repo_name.svg?style=for-the-badge
-[forks-url]: https://github.com/github_username/repo_name/network/members
-[stars-shield]: https://img.shields.io/github/stars/github_username/repo_name.svg?style=for-the-badge
-[stars-url]: https://github.com/github_username/repo_name/stargazers
-[issues-shield]: https://img.shields.io/github/issues/github_username/repo_name.svg?style=for-the-badge
-[issues-url]: https://github.com/github_username/repo_name/issues
-[license-shield]: https://img.shields.io/github/license/github_username/repo_name.svg?style=for-the-badge
-[license-url]: https://github.com/github_username/repo_name/blob/master/LICENSE.txt
-[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
-[linkedin-url]: https://linkedin.com/in/linkedin_username
-[product-screenshot]: images/screenshot.png
-[Next.js]: https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white
-[Next-url]: https://nextjs.org/
-[React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
-[React-url]: https://reactjs.org/
-[Vue.js]: https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D
-[Vue-url]: https://vuejs.org/
-[Angular.io]: https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white
-[Angular-url]: https://angular.io/
-[Svelte.dev]: https://img.shields.io/badge/Svelte-4A4A55?style=for-the-badge&logo=svelte&logoColor=FF3E00
-[Svelte-url]: https://svelte.dev/
-[Laravel.com]: https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white
-[Laravel-url]: https://laravel.com
-[Bootstrap.com]: https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white
-[Bootstrap-url]: https://getbootstrap.com
-[JQuery.com]: https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jquery&logoColor=white
-[JQuery-url]: https://jquery.com 
+- Website - [Add your name here](https://www.your-site.com)

@@ -1,5 +1,6 @@
 import { FiMenu } from "react-icons/fi";
 import { useState, useEffect, useRef } from "react";
+import React from "react";
 
 const LoggedOutMenu = ({ loginClick, signupClick }) => {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
@@ -57,13 +58,13 @@ const LoggedOutMenu = ({ loginClick, signupClick }) => {
         ref={menuRef}
       >
         <button
-          className="md:w-[112px] w-full h-10 rounded-full bg-transparent font-semibold text-[14px] text-dark-grey  border border-dark-grey hover:text-black hover:border-black"
+          className="md:w-[112px] w-full h-10 rounded-full bg-transparent font-semibold text-[.75em] text-very-dark-grey border border-very-dark-grey hover:text-white hover:bg-very-dark-grey hover:border-none"
           onClick={loginClick}
         >
           Log in
         </button>
         <button
-          className="md:ml-3 md:mt-0 mt-6 ml-0 md:w-[112px] w-full h-10 rounded-full bg-dark-grey font-semibold text-[14px] text-white hover:bg-black"
+          className="md:ml-3 md:mt-0 mt-6 ml-0 md:w-[112px] w-full h-10 rounded-full bg-very-dark-grey font-semibold text-[.75em] text-white hover:bg-dark-grey"
           onClick={signupClick}
         >
           Sign up

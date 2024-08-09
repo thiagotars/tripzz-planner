@@ -4,7 +4,7 @@
 
 :root {
   --light-grey: hsl(0, 0%, 96%);
-  --medium-grey: hsl(0, 0%, 85%);
+  --medium-grey: hsl(0, 0%, 70%);
   --dark-grey: hsl(0, 0%, 49%);
   --very-dark-grey: hsl(0, 0%, 26%);
 }
@@ -12,3 +12,34 @@
 body {
   font-family: "Poppins", sans-serif;
 }
+
+.slick-prev:before,
+.slick-next:before {
+  color: black !important;
+}
+
+.slick-slide > div {
+  margin: 0 10px;
+}
+
+.slick-track {
+  margin-left: 0;
+}
+
+/* .slick-list {
+  display: flex !important;
+  justify-content: flex-start !important;
+  align-items: flex-start !important;
+}
+
+.slick-track {
+  display: flex !important;
+  align-items: flex-start !important;
+}
+
+.slider-item {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+} */

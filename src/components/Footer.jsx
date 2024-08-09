@@ -1,8 +1,9 @@
 import { FaInstagram, FaFacebook, FaTwitter } from "react-icons/fa";
+import React from "react";
 
 const Footer = () => {
   return (
-    <footer className="bg-medium-grey py-20 2xl:px-[280px] xl:px-[200px] sm:px-[80px] px-6">
+    <footer className="bg-light-grey py-20 2xl:px-[280px] xl:px-[200px] sm:px-[80px] px-6 mt-28">
       <main className="flex flex-col md:flex-row justify-between items-center">
         <div className="flex items-center w-[120px]">
           <img className="w-10" src="src/assets/Logo.svg" alt="" />

@@ -1,104 +1,274 @@
-import { FaPlus } from "react-icons/fa";
+import {
+  FaPlus,
+  FaChevronDown,
+  FaChevronRight,
+  FaSpinner,
+  FaRegTrashAlt,
+} from "react-icons/fa";
 import ExpenseTypeDropdown from "../../components/ExpenseTypeDropdown";
-import { data } from "../../data/data";
+import { useOutletContext, useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
+import api from "../../utils/api";
+import BudgetSummary from "../../components/BudgetSummary";
+import React from "react";
+import { useAuth } from "../../AuthProvider";
+import { clearErrorMessage } from "../../utils/clearErrorMessage";
 
 const Budget = () => {
-  const budgetData = data[0].trip.budget;
-  const expenses = budgetData.expenses;
+  const { user } = useAuth();
+  const { tripData, setTripData } = useOutletContext();
+  const [expenses, setExpenses] = useState([]);
+  const [isExpensesOpen, setIsExpensesOpen] = useState(false); // Initially false
+  const [loading, setLoading] = useState(false);
+  const [expenseDeleteLoading, setExpenseDeleteLoading] = useState({});
+  const [selectedExpenseId, setSelectedExpenseId] = useState(null);
 
-  const totalSpent = expenses.reduce((sum, expense) => sum + expense.value, 0);
-
-  const expensesItems = expenses.map((expense) => {
-    return (
-      <div key={expense.id} className="flex w-full">
-        <div className="min-w-[2.5rem] h-[2.5rem] rounded-full bg-medium-grey"></div>
-        <div className="flex flex-col w-full ml-4">
-          <div className="flex w-full justify-between text-[.875em]">
-            <p>{expense.name}</p>
-            <p>{`$ ${expense.value.toFixed(2)}`}</p>
-          </div>
-          <p className="text-[.75em] text-dark-grey">July 25th - Activities</p>
-        </div>
-      </div>
-    );
+  const [newExpense, setNewExpense] = useState({
+    tripId: tripData._id,
+    budgetId: "",
+    userId: user._id,
+    amount: "",
+    description: "",
+    type: { type: "Type", icon: "" },
   });
 
-  return (
-    <main className="w-[50rem]">
-      <div className="px-10">
-        <div className="w-full flex">
-          <div className="w-1/2 pr-8">
-            <h2 className="text-[1.25em] font-bold mb-4">Budget</h2>
-            <div className="flex flex-col gap-6 p-6 justify-center w-full max-h-[12.5rem] rounded-[1.25rem] border">
-              <div className="w-full flex justify-between items-center">
-                <p className="text-[.875rem]">Total Spent</p>
-                <h1 className="font-bold">
-                  <span className="font-normal text-[.875em] mr-2">$</span>
-                  {totalSpent.toFixed(2)}
-                </h1>
-              </div>
-              <div className="w-full flex justify-between items-center">
-                <p className="text-[.875rem]">Your Limit</p>
-                <h1 className="font-bold">
-                  <span className="font-normal text-[.875em] mr-2">$</span>
-                  {budgetData.limit.toFixed(2)}
-                </h1>
-              </div>
-              <div className="w-full flex justify-between items-center">
-                <p className="text-[.875rem]">Remaining</p>
-                <h1 className="font-bold">
-                  <span className="font-normal text-[.875em] mr-2">$</span>
-                  {(budgetData.limit - totalSpent).toFixed(2)}
-                </h1>
+  const [errorMessage, setErrorMessage] = useState("");
+
+  useEffect(() => {
+    if (tripData) {
+      const expensesData = tripData.budget?.expenses || [];
+      setExpenses(expensesData);
+      setNewExpense((prev) => ({
+        ...prev,
+        budgetId: tripData.budget?._id,
+      }));
+      setIsExpensesOpen(expensesData.length > 0); // Set open based on expenses length
+    }
+  }, [tripData]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        selectedExpenseId &&
+        !event.target.closest(`[data-expense-id="${selectedExpenseId}"]`)
+      ) {
+        setSelectedExpenseId(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [selectedExpenseId]);
+
+  const handleExpensesClick = () => {
+    setIsExpensesOpen((prev) => !prev);
+  };
+
+  const validateExpense = () => {
+    if (
+      !newExpense.description.trim() ||
+      !newExpense.amount ||
+      newExpense.type.type === "Type"
+    ) {
+      setErrorMessage("All fields must be filled.");
+      clearErrorMessage(setErrorMessage);
+      return false;
+    }
+
+    setErrorMessage("");
+    return true;
+  };
+
+  const handleAddExpense = async () => {
+    if (!validateExpense()) {
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await api.post(
+        `/api/v1/trips/${tripData._id}/budget/${newExpense.budgetId}/expenses`,
+        { ...newExpense, amount: parseFloat(newExpense.amount) || 0 }
+      );
+
+      const newExpenseData = response.data.expense;
+
+      setTripData((prevTripData) => ({
+        ...prevTripData,
+        budget: {
+          ...prevTripData.budget,
+          expenses: [...(prevTripData.budget.expenses || []), newExpenseData],
+        },
+      }));
+
+      setNewExpense({
+        tripId: tripData._id,
+        budgetId: tripData.budget._id,
+        userId: user._id,
+        amount: "",
+        description: "",
+        type: { type: "Other", icon: "" },
+      });
+      setIsExpensesOpen(true);
+      setErrorMessage("");
+    } catch (error) {
+      console.error("Error adding expense:", error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteExpense = async (expenseId) => {
+    setExpenseDeleteLoading((prev) => ({ ...prev, [expenseId]: true }));
+
+    try {
+      const response = await api.delete(
+        `/api/v1/trips/${tripData._id}/budget/${newExpense.budgetId}/expenses/${expenseId}`
+      );
+
+      if (response.status === 200) {
+        setTripData((prevTripData) => ({
+          ...prevTripData,
+          budget: {
+            ...prevTripData.budget,
+            expenses: prevTripData.budget.expenses.filter(
+              (expense) => expense._id !== expenseId
+            ),
+          },
+        }));
+      } else {
+        console.error("Unexpected response status:", response.status);
+      }
+    } catch (error) {
+      console.error("Error deleting expense:", error.message);
+    } finally {
+      setExpenseDeleteLoading((prev) => ({ ...prev, [expenseId]: false }));
+      setSelectedExpenseId(null);
+    }
+  };
+
+  if (!tripData) return null;
+
+  const handleExpenseClick = (expenseId) => {
+    setSelectedExpenseId((prevId) => (prevId === expenseId ? null : expenseId));
+  };
+
+  const expenseItems =
+    expenses.length > 0 ? (
+      expenses.map((expense) =>
+        expense ? (
+          <div
+            key={expense._id}
+            className="flex items-center gap-2 flex-grow"
+            data-expense-id={expense._id}
+          >
+            <div
+              className="bg-light-grey py-3 px-5 flex-grow rounded-lg cursor-pointer"
+              onClick={() => handleExpenseClick(expense._id)}
+            >
+              <div className="flex flex-col w-full">
+                <div className="flex w-full justify-between text-[.875em] ">
+                  <p>{expense.description}</p>
+                  <p className="font-semibold">
+                    {tripData.destination.currency[0].symbol}{" "}
+                    {(expense.amount || 0).toFixed(2)}
+                  </p>
+                </div>
+                <p className="text-[.75em] text-dark-grey">
+                  {expense.type.type}
+                </p>
               </div>
             </div>
-            <div className="flex justify-end mt-8">
-              <input
-                className="rounded-full bg-light-grey px-6 py-2 w-[7.5rem] text-[.875em] focus: outline-none"
-                type="text"
-                name=""
-                id=""
-                placeholder="0,00"
-              />
-              <button className="bg-black text-[.875rem] h-[2.5rem] font-bold text-white px-6 rounded-full ml-4">
-                Set Limit
+            {selectedExpenseId === expense._id && (
+              <button
+                className="bg-red-500 text-white flex items-center justify-center rounded-full w-8 h-8 flex-shrink-0"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDeleteExpense(expense._id);
+                }}
+              >
+                {expenseDeleteLoading[expense._id] ? (
+                  <FaSpinner className="animate-spin" />
+                ) : (
+                  <FaRegTrashAlt />
+                )}
               </button>
-            </div>
+            )}
           </div>
-          <div className="w-1/2 border-l pl-8">
-            <h2 className="mb-2 pb-4 font-bold">Your Expenses</h2>
-            <div className="flex flex-col gap-4 max-h-[20rem] pr-6 overflow-scroll">
-              {expensesItems}
-            </div>
-          </div>
-        </div>
-        <div className="my-20">
-          <div className="flex items-center">
-            <FaPlus className="w-[.625rem]" />
-            <h5 className="mx-4 font-bold">Add New Expense</h5>
-          </div>
-          <div className="flex gap-2 mt-6 px-6 h-10">
+        ) : null
+      )
+    ) : (
+      <p className="text-[.815em]">No expenses yet</p>
+    );
+
+  return (
+    <main className="w-[50rem] sm:px-0 px-6">
+      <BudgetSummary />
+      <div className="mt-12 mb-28 w-full flex sm:flex-row flex-col">
+        <div className="flex flex-col w-full sm:w-1/2 px-6 sm:px-10 py-8 bg-light-grey rounded-[1.25rem]">
+          <h5 className="font-semibold text-[.875em] mb-8">Add new expense</h5>
+          <div className="flex flex-col gap-3">
             <input
-              className="rounded-full text-[.875em] w-1/2 bg-light-grey px-6 py-2 focus: outline-none"
               type="text"
-              name=""
-              id=""
+              className="rounded-full w-full text-[.875em] bg-white px-6 py-2 focus:outline-none"
+              value={newExpense.description}
+              onChange={(e) =>
+                setNewExpense({ ...newExpense, description: e.target.value })
+              }
               placeholder="e.g. 'Lunch at Bacoa'"
             />
-            <ExpenseTypeDropdown />
-            <input
-              className="rounded-full text-[.875em] w-1/4 bg-light-grey px-6 py-2 focus: outline-none"
-              type="text"
-              name=""
-              id=""
-              placeholder="0,00"
-            />
+            <div className="flex gap-3">
+              <ExpenseTypeDropdown
+                selectedType={newExpense.type}
+                onTypeChange={(type) => setNewExpense({ ...newExpense, type })}
+              />
+              <div className=" flex items-center rounded-full px-6 text-[.875em] w-1/2 bg-white">
+                <p>{tripData.destination.currency[0].symbol}</p>
+                <input
+                  className="rounded-full w-1/2 bg-white pl-2 focus:outline-none"
+                  type="text"
+                  value={newExpense.amount}
+                  onChange={(e) =>
+                    setNewExpense({ ...newExpense, amount: e.target.value })
+                  }
+                  placeholder="0.00"
+                />
+              </div>
+            </div>
           </div>
-          <div className="flex justify-end px-6 mt-6">
-            <button className="bg-black h-[2.5rem] font-bold text-[.875em] text-white px-6 rounded-full">
-              Add Expense
+          <div className="flex justify-end items-center mt-6">
+            <p id="error-message" className="text-red-500 text-[.75em] mr-4">
+              {errorMessage}
+            </p>
+            <button
+              className="bg-very-dark-grey hover:bg-dark-grey font-semibold text-[.875em] text-white rounded-full w-32 h-10 flex items-center justify-center"
+              onClick={handleAddExpense}
+              disabled={loading}
+            >
+              {loading ? (
+                <FaSpinner className="animate-spin mr-2" />
+              ) : (
+                "Add Expense"
+              )}
             </button>
           </div>
+        </div>
+        <div className="w-full sm:w-1/2 mt-16 sm:mt-0 sm:px-10 px-0">
+          <div
+            className="flex justify-between mb-8 items-center cursor-pointer"
+            onClick={() => handleExpensesClick()}
+          >
+            <h5 className="font-semibold text-[.875em]">Expenses</h5>
+            <span className="text-[.75em] text-dark-grey">
+              {isExpensesOpen ? <FaChevronDown /> : <FaChevronRight />}
+            </span>
+          </div>
+          {isExpensesOpen && (
+            <div className="flex flex-col gap-2">{expenseItems}</div>
+          )}
         </div>
       </div>
     </main>
