@@ -32,7 +32,7 @@ const PlaceCard = ({
   console.log(tripData);
 
   useEffect(() => {
-    setIsTimeSet(!!place.dateTime); // Update isTimeSet when place.dateTime changes
+    setIsTimeSet(!!place.dateTime);
   }, [place.dateTime]);
 
   const saveNotes = async () => {
@@ -49,7 +49,6 @@ const PlaceCard = ({
           p._id === place._id ? updatedPlace : p
         );
 
-        // Ensure no undefined values are present
         const filteredPlaces = updatedPlaces.filter(Boolean);
 
         setTripData({ ...tripData, places: filteredPlaces });
@@ -115,23 +114,19 @@ const PlaceCard = ({
   };
 
   const deleteItemFromList = async (placeId) => {
-    setLoading(true); // Start loading
+    setLoading(true);
     try {
-      // Delete the place from the database
       const deletePlaceResponse = await api.delete(`/api/v1/places/${placeId}`);
 
       if (deletePlaceResponse.status !== 200) {
         throw new Error("Failed to delete place from database");
       }
 
-      // Update the places array in tripData
       const updatedPlaces = tripData.places.filter(
         (place) => place._id !== placeId
       );
 
-      // Update the tripDays array by removing the place from all tripDays
       const updatedTripDays = tripData.tripDays.map((tripDay) => {
-        // Remove the place from the day's places
         const updatedPlacesForDay = tripDay.places.filter(
           (place) => place._id !== placeId
         );
@@ -139,7 +134,6 @@ const PlaceCard = ({
         return { ...tripDay, places: updatedPlacesForDay };
       });
 
-      // Update tripData with the new places and tripDays
       setTripData({
         ...tripData,
         places: updatedPlaces,
@@ -148,7 +142,7 @@ const PlaceCard = ({
     } catch (error) {
       console.error("Error deleting place from list:", error.message);
     } finally {
-      setLoading(false); // Stop loading
+      setLoading(false);
     }
   };
 
@@ -156,31 +150,27 @@ const PlaceCard = ({
     setLoading(true);
     console.log(placeId, dayId);
     try {
-      // Send PATCH request to update the place with an empty dateTime
       const response = await api.patch(`/api/v1/places/${placeId}`, {
         dateTime: "",
       });
-      const updatedPlace = response.data.data; // Updated place from server response
+      const updatedPlace = response.data.data;
       console.log(updatedPlace);
-      // Update the places array in tripData
+
       const updatedPlaces = tripData.places.map((place) =>
         place._id === placeId ? updatedPlace : place
       );
 
-      // Update the tripDays array with the updated place data
       const updatedTripDays = tripData.tripDays.map((tripDay) => {
         if (tripDay._id === dayId) {
-          // Filter out the deleted place and include the updated place if it was in this day
           const updatedPlacesForDay = tripDay.places
             .map((place) => (place._id === placeId ? updatedPlace : place))
-            .filter((place) => place._id !== placeId); // Ensure the place is removed from the list
+            .filter((place) => place._id !== placeId);
 
           return { ...tripDay, places: updatedPlacesForDay };
         }
         return tripDay;
       });
 
-      // Update tripData with the new places and tripDays
       setTripData({
         ...tripData,
         places: updatedPlaces,
@@ -326,10 +316,10 @@ const PlaceCard = ({
                     deletePlaceFromItinerary(place._id, day._id);
                   }
                 }}
-                disabled={loading} // Disable button when loading
+                disabled={loading}
               >
                 {loading ? (
-                  <FaSpinner className="animate-spin text-white" /> // Show spinner when loading
+                  <FaSpinner className="animate-spin text-white" />
                 ) : (
                   <FaRegTrashAlt className="text-white" />
                 )}

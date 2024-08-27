@@ -4,9 +4,7 @@ import { Outlet, useParams } from "react-router-dom";
 const UserLayout = () => {
   const { userId } = useParams();
 
-  console.log(userId);
-
-  // console.log(userTrips);
+  // console.log(userId);
   return (
     <>
       <Outlet context={{ userId }} />

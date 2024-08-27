@@ -7,7 +7,7 @@ const UserTrips = ({ userTrips, userId, onTripDeleted }) => {
   const ongoingTrips = userTrips?.ongoingTrips ?? [];
   const upcomingTrips = userTrips?.upcomingTrips ?? [];
   const pastTrips = userTrips?.pastTrips ?? [];
-  console.log(userTrips);
+  // console.log(userTrips);
 
   return (
     <>

@@ -67,7 +67,7 @@ const getSingleTrip = async (req, res) => {
 const createTrip = async (req, res) => {
   try {
     const { createdBy, destination, startDate, endDate } = req.body;
-    console.log(createdBy, destination, startDate, endDate);
+    console.log(createdBy);
 
     if (!createdBy || !destination || !startDate || !endDate) {
       return res.status(400).json({ error: "All fields are required." });
@@ -193,11 +193,12 @@ const deleteTrip = async (req, res) => {
     await Day.deleteMany({ tripId });
 
     // Delete lists associated with the trip
-    // await List.deleteMany({ tripId });
+    await List.deleteMany({ tripId });
 
     // Delete events associated with the trip
     await Event.deleteMany({ tripId });
 
+    // Delete places associated with the trip
     await Place.deleteMany({ tripId });
 
     const deletedTrip = await Trip.findByIdAndDelete(tripId);

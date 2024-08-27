@@ -57,7 +57,6 @@ const BudgetSummary = () => {
     const fetchRate = async () => {
       const rate = await getExchangeRate(userCurrency.code, tripCurrency.code);
       setExchangeRate(rate);
-      console.log("Exchange rate:", rate);
     };
 
     fetchRate();
@@ -65,10 +64,9 @@ const BudgetSummary = () => {
 
   const handleSetLimit = async () => {
     setLoading(true);
-    console.log(userCurrency.code, tripCurrency.code);
     try {
       let limit;
-      console.log(selectedCurrency.code, tripCurrency.code);
+
       if (selectedCurrency.code === tripCurrency.code) {
         limit = parseFloat(inputLimit);
       }
@@ -81,8 +79,6 @@ const BudgetSummary = () => {
         expenses: tripData.budget.expenses,
       });
 
-      console.log("Response from setting limit:", response.data);
-
       setTripData((prevTripData) => ({
         ...prevTripData,
         budget: {
@@ -90,7 +86,6 @@ const BudgetSummary = () => {
           maxBudget: response.data.budget.maxBudget,
         },
       }));
-      setis;
       setInputLimit("");
     } catch (error) {
       console.error(
@@ -110,8 +105,6 @@ const BudgetSummary = () => {
         maxBudget: 0,
         expenses: tripData.budget.expenses,
       });
-
-      console.log("Response from resetting limit:", response.data);
 
       setTripData((prevTripData) => ({
         ...prevTripData,
@@ -133,11 +126,8 @@ const BudgetSummary = () => {
   const handleShowConversionClick = () => {
     setIsConversionShowing((prev) => !prev);
   };
-  // console.log(selectedCurrency);
 
   const maxBudget = tripData.budget.maxBudget;
-  // console.log(maxBudget, totalSpent);
-
   const remainingBudget = maxBudget - totalSpent;
   const percentageSpent = maxBudget > 0 ? (totalSpent / maxBudget) * 100 : 0;
 

@@ -5,6 +5,7 @@ import {
   RouterProvider,
   Navigate,
 } from "react-router-dom";
+
 import Home from "./pages/Home";
 import Layout from "./components/Layout";
 import Search from "./pages/Search";
@@ -17,29 +18,32 @@ import Budget from "./pages/Trip/Budget";
 import UserLayout from "./components/UserLayout";
 import UserPage from "./pages/UserPage";
 import UserSettings from "./pages/UserSettings";
-import axios from "axios";
-import { useContext } from "react";
-import React from "react";
+import React, { useEffect } from "react";
 import { useAuth } from "./AuthProvider";
-
-// axios.defaults.baseURL = "http://localhost:3000";
-// axios.defaults.headers.common["Content-Type"] = "application/json";
-// axios.defaults.headers.common["Accept"] = "application/json";
-// axios.interceptors.request.use(
-//   (config) => {
-//     const token = localStorage.getItem("token");
-//     if (token) {
-//       config.headers.Authorization = `Bearer ${token}`;
-//     }
-//     return config;
-//   },
-//   (error) => {
-//     return Promise.reject(error);
-//   }
-// );
+import api from "./utils/api";
 
 function App() {
-  const { user } = useAuth(); // Access user from useAuth
+  const { user, setUser } = useAuth();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      api
+        .get("/api/v1/me", {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((response) => {
+          setUser({
+            ...response.data.user,
+            token,
+          });
+        })
+        .catch(() => {
+          localStorage.removeItem("token");
+          setUser(null);
+        });
+    }
+  }, [setUser]);
 
   const router = createBrowserRouter(
     createRoutesFromElements(
@@ -48,7 +52,7 @@ function App() {
         <Route path="search" element={<Search />} />
         <Route
           path="user/:userId"
-          element={user ? <UserLayout /> : <Navigate to="/" />}
+          element={user ? <UserLayout /> : <Navigate to="/" replace />}
         >
           <Route index element={<UserPage />} />
           <Route path="settings" element={<UserSettings />} />

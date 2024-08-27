@@ -59,16 +59,15 @@ const getSingleDay = async (req, res) => {
 const updateDay = async (req, res) => {
   try {
     const { dayId } = req.params;
-    const { places, events } = req.body; // Assuming these are the fields you want to update
+    const { places, events } = req.body;
 
-    // Find the day by ID
     const day = await Day.findById(dayId);
     if (!day) {
       return res
         .status(StatusCodes.NOT_FOUND)
         .json({ message: "Day not found" });
     }
-    console.log(events);
+
     day.places = places;
     day.events = events;
 

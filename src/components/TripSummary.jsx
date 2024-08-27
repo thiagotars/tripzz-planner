@@ -1,5 +1,4 @@
 import {
-  FaRegEdit,
   FaRegTrashAlt,
   FaUserPlus,
   FaArrowLeft,
@@ -10,8 +9,7 @@ import { FaArrowRightLong } from "react-icons/fa6";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../utils/api";
 import React, { useState } from "react";
-import DateCalendar from "./DateCalendar";
-import { useAuth } from "../AuthProvider"; // Adjust the import path as necessary
+import { useAuth } from "../AuthProvider";
 
 const TripSummary = ({ tripData }) => {
   const { user } = useAuth();

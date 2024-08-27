@@ -38,9 +38,9 @@ const Lists = () => {
         },
       });
 
-      console.log(response.data.results);
+      // console.log(response.data.results);
       if (response.status === 200) {
-        console.log("Suggestions fetched:", response.data.results);
+        // console.log("Suggestions fetched:", response.data.results);
         setSuggestions(response.data.results || []);
       } else {
         throw new Error("Failed to fetch search suggestions");
@@ -91,7 +91,7 @@ const Lists = () => {
 
       if (response.status === 200) {
         const detailedPlace = response.data.result;
-        console.log("Detailed Place:", detailedPlace);
+        // console.log("Detailed Place:", detailedPlace);
         setSelectedPlace(detailedPlace);
       } else {
         throw new Error("Failed to fetch detailed place information");
@@ -160,8 +160,10 @@ const Lists = () => {
       <div className="mt-10">
         <div className="flex flex-col sm:flex-row w-full mb-24 gap-6 justify-between p-0 sm:p-10 sm:py-6">
           <div className="sm:w-1/2 w-full p-8 bg-light-grey rounded-[1.25rem]">
-            <h1 className="font-semibold text-very-dark-grey">Search places</h1>
-            <p className="text-medium-grey text-[.815em] max-w-[12rem] mt-2">
+            <h1 className="font-semibold text-very-dark-grey text-[.875em] sm:text-[1em]">
+              Search places
+            </h1>
+            <p className="text-dark-grey text-[.815em] max-w-[12rem] mt-2">
               Find places you want to visit on your trip.
             </p>
 
@@ -169,8 +171,8 @@ const Lists = () => {
               <div className="relative">
                 <input
                   type="text"
-                  className="rounded-full w-full h-10 py-2 px-6 text-[.875em] focus:outline-none bg-white"
-                  placeholder="Type a place"
+                  className="rounded-full w-full h-10 py-2 px-6 text-[.815em] focus:outline-none bg-white"
+                  placeholder="Type a place name"
                   value={searchTerm}
                   onChange={handleSearchChange}
                 />
@@ -189,7 +191,7 @@ const Lists = () => {
                       >
                         <div className="font-medium">{suggestion.name}</div>
                         {suggestion.formatted_address && (
-                          <div className="text-gray-600 text-sm">
+                          <div className="text-light-grey text-sm">
                             {suggestion.formatted_address}
                           </div>
                         )}
@@ -199,7 +201,7 @@ const Lists = () => {
                 )}
               </div>
               <button
-                className="flex justify-center items-center cursor-pointer w-32 bg-very-dark-grey text-white h-10 rounded-full text-[.875em] hover:bg-dark-grey"
+                className="flex justify-center items-center cursor-pointer w-32 bg-very-dark-grey text-white h-10 rounded-full  text-[.815em] sm:text-[.875em] hover:bg-dark-grey"
                 onClick={handleCreatePlace}
                 disabled={!selectedPlace || loading}
               >
@@ -212,22 +214,24 @@ const Lists = () => {
             </div>
           </div>
           <div className="sm:w-1/2 w-full p-8 bg-white rounded-[1.25rem]">
-            <h1 className="font-semibold text-very-dark-grey">Create list</h1>
-            <p className="text-medium-grey text-[.815em] max-w-[12rem] mt-2">
+            <h1 className="font-semibold text-very-dark-grey text-[.875em] sm:text-[1em]">
+              Create list
+            </h1>
+            <p className="text-dark-grey text-[.815em] max-w-[12rem] mt-2">
               Create lists to organize your places by category.
             </p>
             <div className="flex flex-col gap-4 mt-6">
               <div className="relative">
                 <input
                   type="text"
-                  className="rounded-full w-full h-10 py-2 px-6 text-[.875em] focus:outline-none bg-light-grey"
-                  placeholder="e.g. Museums"
+                  className="rounded-full w-full h-10 py-2 px-6 text-[.815em] focus:outline-none border border-medium-grey"
+                  placeholder="Type a list name"
                   value={newListName}
                   onChange={(e) => setNewListName(e.target.value)}
                 />
               </div>
               <button
-                className="cursor-pointer w-32 bg-very-dark-grey text-white h-10 rounded-full text-[.875em] hover:bg-dark-grey"
+                className="cursor-pointer w-32 border border-medium-grey text-dark-grey h-10 rounded-full text-[.815em] sm:text-[.875em] hover:bg-very-dark-grey hover:text-white"
                 onClick={handleCreateListClick}
                 disabled={!newListName.trim() || loading}
               >
@@ -263,7 +267,7 @@ const Lists = () => {
               )
           )}
       </div>
-      <PlacesToVisit city={tripData.destination.city} />
+      {/* <PlacesToVisit city={tripData.destination.city} /> */}
     </main>
   );
 };

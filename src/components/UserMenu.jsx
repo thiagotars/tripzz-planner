@@ -12,8 +12,9 @@ const UserMenu = ({ logged, logout }) => {
   const imageRef = useRef();
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
+  const userName = user.name;
 
-  console.log(user);
+  if (!user) return;
   const toggleMenu = () => {
     setIsOpen((prev) => !prev);
   };
@@ -25,18 +26,20 @@ const UserMenu = ({ logged, logout }) => {
       }
     });
   }
-  // console.log(user);
+
   return (
     <div className="relative flex items-center">
       <div className="flex items-center">
-        <p className="sm:flex hidden font-semibold text-[.75em] text-very-dark-grey">
-          <span className="font-normal mr-1">Welcome,</span> {user.name}
+        <p className="sm:flex hidden font-semibold text-[.7em] text-very-dark-grey">
+          <span className="font-normal mr-1">Welcome,</span> {userName}
         </p>
         <button
           ref={imageRef}
-          className="w-8 h-8 bg-user bg-contain ml-6 rounded-full hover:shadow-lg"
+          className="w-8 h-8 bg-very-dark-grey bg-contain ml-6 rounded-full hover:shadow-lg font-semibold text-white text-[.8em]"
           onClick={toggleMenu}
-        ></button>
+        >
+          {userName[0].toUpperCase()}
+        </button>
       </div>
       {isOpen && (
         <div
@@ -53,7 +56,7 @@ const UserMenu = ({ logged, logout }) => {
                 <button className="text-[.875em] ml-2">Your Tripzz</button>
               </div>
             </Link>
-            <Link
+            {/* <Link
               className="py-3 px-8  rounded-full cursor-pointer hover:bg-light-grey"
               to="/user/settings"
             >
@@ -61,8 +64,9 @@ const UserMenu = ({ logged, logout }) => {
                 <IoSettingsOutline />
                 <button className="text-[.875em] ml-2">Settings</button>
               </div>
-            </Link>
-            <button
+            </Link> */}
+            <Link
+              to="/"
               onClick={logout}
               className="py-3 px-8  bg-very-dark-grey rounded-full text-white cursor-pointer hover:bg-black"
             >
@@ -70,7 +74,7 @@ const UserMenu = ({ logged, logout }) => {
                 <IoLogOutOutline />
                 <p className="text-[.875em] ml-2">Log out</p>
               </div>
-            </button>
+            </Link>
           </div>
         </div>
       )}

@@ -96,7 +96,7 @@ const DropdownSchedule = ({ place, day, setLocalPlace, setIsTimeSet }) => {
   const formattedOpenHours = parseOpenHours(place.opening_hours, dayOfWeek);
 
   const handleScheduleChange = async (selectedHour) => {
-    setIsLoading(true); // Start loading spinner
+    setIsLoading(true);
     try {
       const newSelectedTime = new Date(day.date);
       const [hour, minute] = selectedHour.split(":");
@@ -135,8 +135,8 @@ const DropdownSchedule = ({ place, day, setLocalPlace, setIsTimeSet }) => {
     } catch (error) {
       console.error("Error updating place time:", error.message);
     } finally {
-      setIsLoading(false); // Stop loading spinner
-      setIsOpen(false); // Close dropdown
+      setIsLoading(false);
+      setIsOpen(false);
     }
   };
 

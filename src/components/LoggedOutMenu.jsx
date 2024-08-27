@@ -9,38 +9,19 @@ const LoggedOutMenu = ({ loginClick, signupClick }) => {
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobileOpen(false); // Close menu if screen width exceeds breakpoint
+      setIsMobileOpen(false);
     };
 
     window.addEventListener("resize", handleResize);
-    handleResize(); // Initial check on mount
+    handleResize();
 
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
-  //   useEffect(() => {
-  //     const handleClickOutside = (event) => {
-  //       if (!menuRef.current.contains(event.target)) {
-  //         setIsMobileOpen(false);
-  //       }
-  //     };
-
-  //     window.addEventListener("click", handleClickOutside);
-
-  //     return () => window.removeEventListener("click", handleClickOutside);
-  //   }, []);
 
   const toggleMobileMenu = () => {
     setIsMobileOpen((prev) => !prev);
   };
 
-  //   if (isMobileOpen) {
-  //     window.addEventListener("click", (e) => {
-  //       if (e.target !== menuRef.current && e.target !== hamburgerRef.current) {
-  //         setIsMobileOpen(false);
-  //       }
-  //     });
-  //   }
   return (
     <div className="relative">
       <button

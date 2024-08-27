@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState } from "react";
 import { Outlet, useParams } from "react-router-dom";
 import TripSummary from "./TripSummary";
 import TripMenu from "./TripMenu";
@@ -40,11 +40,10 @@ const TripLayout = () => {
           const places = placesResponse.data;
           return {
             ...day,
-            places: places, // Assuming places is an array of full place objects
+            places: places,
           };
         });
 
-        // Wait for all promises to resolve
         const daysWithPlaces = await Promise.all(fetchPlacesPromises);
 
         const budgetResponse = await api.get(`/api/v1/trips/${tripId}/budget`);
@@ -91,7 +90,7 @@ const TripLayout = () => {
             src={tripData.destination.image}
             className="absolute top-0 w-screen h-[560px] sm:h-[610px] md:h-[640px] 2xl:h-[680px] -z-20 object-cover"
           />
-          <div className="absolute top-0 w-screen h-[560px] sm:h-[610px] md:h-[640px] 2xl:h-[680px] bg-black bg-opacity-60 -z-10"></div>
+          <div className="absolute top-0 w-screen h-[560px] sm:h-[610px] md:h-[640px] 2xl:h-[680px] bg-black bg-opacity-50 -z-10"></div>
         </>
       )}
 

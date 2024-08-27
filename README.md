@@ -114,18 +114,11 @@ GOOGLE_API_KEY=YOUR_GOOGLE_API_KEY
 
 Your app should be accessible at http://localhost:3000
 
-**Important Note:**
-
-    For development purposes, you can use the following temporary credentials:
-
-    Username: thiago@gmail.com
-    Password: 123456
-
 ## Continued development
 
 I am currently focused on implementing a robust user authentication and authorization system to enhance security and privacy. Once complete, users will be again able to create their own accounts and securely manage their travel plans.
 
-In parallel, we are committed to improving the overall user experience by:
+I am committed to improving the overall user experience by:
 
     Enhancing UI/UX: Implementing smoother page transitions and visually appealing loading states.
     Expanding features: Introducing collaborative features that allow users to share and plan trips together.

@@ -20,13 +20,22 @@ export const useAuth = () => {
 };
 
 const AuthProvider = ({ children }) => {
-  const [token, setToken] = useState(null);
+  const [token, setToken] = useState(localStorage.getItem("token") || "");
   const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    if (token) {
+      localStorage.setItem("token", token);
+    } else {
+      localStorage.removeItem("token");
+    }
+  }, [token]);
 
   useEffect(() => {
     const fetchMe = async () => {
       try {
         const response = await api.get("/api/v1/me");
+
         setToken(response.data.token);
         setUser(response.data.user);
       } catch (error) {
@@ -99,6 +108,7 @@ const AuthProvider = ({ children }) => {
   const logout = () => {
     setToken(null);
     setUser(null);
+    localStorage.removeItem("token");
   };
 
   return (

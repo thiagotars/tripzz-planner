@@ -53,7 +53,7 @@ const ExpenseTypeDropdown = ({ selectedType, onTypeChange }) => {
             className="text-[14px] my-1 text-dark-grey hover:text-black cursor-pointer"
             key={key}
             onClick={() => {
-              onTypeChange(item); // Pass the entire type object to the parent
+              onTypeChange(item);
               setIsOpen(false);
             }}
           >

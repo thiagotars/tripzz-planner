@@ -33,7 +33,6 @@ const Itinerary = () => {
     const updatedDays = sortPlacesByDate(days);
     setSortedDays(updatedDays);
 
-    // Initialize openDay state based on sortedDays
     setOpenDay(
       updatedDays.reduce((acc, day) => {
         acc[day._id] = true;
@@ -87,7 +86,7 @@ const Itinerary = () => {
   };
 
   const getDaySuffix = (day) => {
-    if (day > 3 && day < 21) return "th"; // Special case for 11-13
+    if (day > 3 && day < 21) return "th";
     switch (day % 10) {
       case 1:
         return "st";
@@ -107,11 +106,10 @@ const Itinerary = () => {
     try {
       // Create a new Date object from dayItem.date and set time to 00:00
       const date = new Date(dayItem.date);
-      date.setHours(0, 0, 0, 0); // Ensure time is set to 00:00
-      console.log(date);
+      date.setHours(0, 0, 0, 0);
 
       const newPlace = {
-        dateTime: date.toISOString(), // Use ISO string format
+        dateTime: date.toISOString(),
         list: null,
         notes: "",
         name: selectedPlace.name,
@@ -156,13 +154,12 @@ const Itinerary = () => {
         return day;
       });
 
-      // Update tripData.places with the new place
       const updatedPlaces = [...tripData.places, createdPlace];
 
       setTripData((prevTripData) => ({
         ...prevTripData,
         tripDays: updatedDays,
-        places: updatedPlaces, // Update the places array
+        places: updatedPlaces,
       }));
 
       setSelectedPlaces((prevSelectedPlaces) => ({
@@ -326,7 +323,7 @@ const Itinerary = () => {
   return (
     <main className="w-[50rem]">
       <div className="px-6 md:px-0 py-0">{dayItems}</div>
-      <PlacesToVisit city={tripData.destination.city} />
+      {/* <PlacesToVisit city={tripData.destination.city} /> */}
     </main>
   );
 };

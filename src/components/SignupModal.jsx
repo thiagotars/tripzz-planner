@@ -1,46 +1,67 @@
 import { createPortal } from "react-dom";
-import { FaXmark, FaGoogle, FaFacebookF } from "react-icons/fa6";
-import axios from "axios";
-import { useState, useContext } from "react";
-import { UserContext } from "../UserContext";
+import { FaXmark, FaSpinner } from "react-icons/fa6";
+import api from "../utils/api";
+import { useState, useEffect } from "react";
+import { useAuth } from "../AuthProvider";
 import { Navigate } from "react-router-dom";
-import { useEffect } from "react";
-import React from "react";
 
 const SignupModal = ({ isOpen, onClose, changeModal }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [redirect, setRedirect] = useState(false);
-  const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const { setUser } = useContext(UserContext);
+  const { setUser, setToken, user } = useAuth();
 
   useEffect(() => {
-    if (userData) {
+    if (user) {
       setRedirect(true);
     }
-  }, [userData]);
+  }, [user]);
+
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => {
+        setError("");
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [error]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setLoading(true);
+    setError("");
+
     try {
-      const { data } = await axios.post("/api/v1/auth/register", {
+      const { data } = await api.post("/api/v1/auth/register", {
         name,
         email,
         password,
       });
-      setUserData(data); // Assign data to userData
-      setUser(data);
-      console.log(data.user);
+      setUser(data.user);
+      setToken(data.token);
     } catch (error) {
-      // Handle registration failure
-      console.error("Registration failed:", error);
+      console.log("Error during registration:", error);
+
+      if (error.response && error.response.data && error.response.data.error) {
+        setError(error.response.data.error);
+      } else {
+        setError("An error occurred during registration.");
+      }
+
+      setTimeout(() => {
+        setError("");
+      }, 3000);
+    } finally {
+      setLoading(false);
     }
   };
 
-  if (redirect && userData) {
-    return <Navigate to={`/user/${userData.user.id}/overview`} />;
+  if (redirect && user) {
+    return <Navigate to={`/user/${user._id}`} />;
   }
 
   if (!isOpen) {
@@ -60,24 +81,9 @@ const SignupModal = ({ isOpen, onClose, changeModal }) => {
         >
           <FaXmark className="w-8 h-8 p-2 rounded-full hover:bg-light-grey" />
         </button>
-        <h3 className="font-bold max-w-[240px]">
-          Sign up to take your trip planning to the next level
-        </h3>
-        <div className="mt-6 text-[.875em]">
-          <div className="flex justify-center items-center py-3 rounded-full border text-[.8em] text-white font-bold bg-[#1877F2] hover:bg-[#1864f2] cursor-pointer">
-            <FaFacebookF className="w-5 h-5 text-white mr-4" />
-            <p>Sign up with Facebook</p>
-          </div>
-          <div className="flex justify-center items-center py-3 rounded-full border text-[.8em] text-dark-grey font-bold mt-2 bg-white hover:bg-light-grey cursor-pointer">
-            <FaGoogle className="w-5 h-5 text-dark-grey mr-4" />
-            <p>Sign up with Gmail</p>
-          </div>
-          <div className="relative w-full mt-6 border-t">
-            <p className="w-[36px] bg-white absolute text-[.75em] text-dark-grey font-bold top-[50%] left-[50%] transform translate-y-[-50%] translate-x-[-50%]">
-              or
-            </p>
-          </div>
-          <form className="mt-6" onSubmit={handleSubmit}>
+        <h3 className="font-semibold max-w-[240px]">Sign up to tripzz</h3>
+        <div className="mt-8 text-[.875em]">
+          <form onSubmit={handleSubmit}>
             <input
               type="text"
               placeholder="Name"
@@ -99,19 +105,27 @@ const SignupModal = ({ isOpen, onClose, changeModal }) => {
               onChange={(event) => setPassword(event.target.value)}
               className="w-full px-5 py-3 border rounded-full text-[.8em] mt-2"
             />
+            {error && (
+              <div className="text-red-600 text-[.75em] mt-2">{error}</div>
+            )}
             <div className="flex flex-col items-center mt-4">
               <button
                 type="submit"
-                className="font-bold text-[.875em] py-3 px-8 rounded-full hover:bg-light-grey"
+                className="font-semibold text-[.875em] py-3 px-8 rounded-full hover:bg-light-grey"
+                disabled={loading}
               >
-                Sign up with email
+                {loading ? (
+                  <FaSpinner className="animate-spin w-5 h-5" />
+                ) : (
+                  "Sign up with email"
+                )}
               </button>
               <button
-                className="text-[.8em] mt-4 hover:text-dark-grey "
+                className="text-[.8em] mt-6 hover:font-semibold"
                 onClick={changeModal}
               >
                 Already have an account?{" "}
-                <span className="font-bold">Log in</span>
+                <span className="font-semibold">Log in</span>
               </button>
             </div>
           </form>

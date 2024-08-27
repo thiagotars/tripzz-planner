@@ -56,6 +56,7 @@ const createList = async (req, res) => {
       tripId,
       name,
       userId,
+      places: [],
     });
 
     // Save the new list to the database
@@ -95,7 +96,8 @@ const deleteList = async (req, res) => {
 const updateList = async (req, res) => {
   try {
     const { listId } = req.params;
-    const { name, places, events, inItinerary } = req.body;
+    const { name, places, inItinerary } = req.body;
+    console.log(places);
 
     // Find the list by its ID
     let list = await List.findById(listId);
@@ -108,9 +110,8 @@ const updateList = async (req, res) => {
     }
 
     // Update the list properties
-    list.name = name || list.name; // Update name if provided, otherwise keep the existing value
-    list.places = places || list.places; // Update places if provided, otherwise keep the existing value
-    list.events = events || list.events;
+    list.name = name || list.name;
+    list.places = places || list.places;
     list.inItinerary = inItinerary || list.inItinerary;
 
     // Save the updated list

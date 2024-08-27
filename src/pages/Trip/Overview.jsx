@@ -6,29 +6,29 @@ import BudgetSummary from "../../components/BudgetSummary";
 const Overview = () => {
   const { tripData, setTripData } = useOutletContext();
 
-  // console.log(tripData);
-
   if (!tripData) {
     return <div>Loading...</div>;
   }
 
   const days = tripData.tripDays || [];
   const lists = tripData.lists || [];
+  const places = tripData.places || [];
+
+  const countPlacesInList = (listId) => {
+    return places.filter((place) => place.list?._id === listId).length;
+  };
 
   const allListItems = lists.map((list) => {
-    // console.log(list);
+    const itemCount = countPlacesInList(list._id);
     return (
       <div
-        key={list.id}
+        key={list._id}
         className="flex justify-between items-center text-very-dark-grey"
       >
         <p className="text-[0.875em]">{list.name}</p>
-
         <p className="text-[0.75em] text-dark-grey">
-          {list.places
-            ? `${list.places.length} ${
-                list.places.length > 1 ? "items" : "item"
-              }`
+          {itemCount > 0
+            ? `${itemCount} ${itemCount > 1 ? "items" : "item"}`
             : "No items"}
         </p>
       </div>
@@ -61,8 +61,6 @@ const Overview = () => {
           </Link>
         </div>
       </div>
-
-      {/* <PlacesToVisit /> */}
     </main>
   );
 };

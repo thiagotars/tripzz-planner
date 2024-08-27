@@ -6,10 +6,9 @@ import { FaSpinner } from "react-icons/fa";
 const ListsDropdown = ({ lists, placeId, place, setLocalPlace }) => {
   const { tripData, setTripData } = useOutletContext();
   const [isOpen, setIsOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false); // Loading state for button
+  const [isLoading, setIsLoading] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -27,16 +26,14 @@ const ListsDropdown = ({ lists, placeId, place, setLocalPlace }) => {
     setIsLoading(true);
     // console.log(list);
     try {
-      // Update localPlace with the full list object
       const newPlace = { ...place, list };
       setLocalPlace(newPlace);
       setIsOpen(false);
-      // Send PATCH request to update the backend
+
       const response = await api.patch(`/api/v1/places/${placeId}`, { list });
       // console.log(response.data.data.list);
       const updatedPlace = response.data.data;
 
-      // Update the tripData with the full list object
       setTripData((prevTripData) => ({
         ...prevTripData,
         places: prevTripData.places.map((p) =>
@@ -65,7 +62,7 @@ const ListsDropdown = ({ lists, placeId, place, setLocalPlace }) => {
             : "bg-white border hover:border-medium-grey"
         }`}
         onClick={() => setIsOpen((prev) => !prev)}
-        disabled={isLoading} // Disable button while loading
+        disabled={isLoading}
       >
         {isLoading ? (
           <FaSpinner className="animate-spin text-green-500" size={18} />

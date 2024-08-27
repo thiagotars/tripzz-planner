@@ -1,3 +1,4 @@
+const { FaCropSimple } = require("react-icons/fa6");
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 
@@ -5,8 +6,9 @@ const bcrypt = require("bcryptjs");
 const getUserDetails = async (req, res) => {
   try {
     // console.log(req.params);
-    console.log(req);
+    // console.log(req);
     const user = await User.findById(req.params.userId);
+    console.log(user);
     if (!user) {
       return res.status(404).json({ msg: "User not found" });
     }

@@ -3,7 +3,7 @@ import CityCard from "./CityCard";
 
 const OngoingTrips = ({ ongoingTrips, userId, onTripDeleted }) => {
   if (!ongoingTrips) return null;
-  console.log(userId);
+  // console.log(userId);
 
   return (
     <div className="w-full mb-16">
@@ -23,7 +23,7 @@ const OngoingTrips = ({ ongoingTrips, userId, onTripDeleted }) => {
                   trip={trip}
                   startDate={startDate}
                   endDate={endDate}
-                  onTripDeleted={onTripDeleted} // Ensure onTripDeleted is passed to CityCard
+                  onTripDeleted={onTripDeleted}
                 />
               </div>
             );

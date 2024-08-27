@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 const Carousel = ({ days, tripData }) => {
   // console.log(days);
-  console.log(tripData);
+  // console.log(tripData);
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const handleNextClick = () => {
@@ -41,7 +41,7 @@ const Carousel = ({ days, tripData }) => {
     ];
 
     const daysOfMonth = (day) => {
-      let dayOfMonth = day.date.getDate(); // Get the day of the month
+      let dayOfMonth = day.date.getDate();
 
       if (dayOfMonth % 10 === 1 && dayOfMonth !== 11) {
         return "st";
@@ -124,7 +124,7 @@ const Carousel = ({ days, tripData }) => {
     );
   });
 
-  console.log(tripDays);
+  // console.log(tripDays);
 
   return <>{tripDays}</>;
 };

@@ -39,10 +39,11 @@ const Header = () => {
   };
 
   const handleLogoutClick = () => {
+    setIsLoggedIn(false);
+    navigate("/");
     logout();
     setShowSignupContainer(false);
     setShowLoginContainer(false);
-    navigate("/");
   };
 
   const handleLoginClick = () => {
@@ -63,7 +64,11 @@ const Header = () => {
   };
 
   return (
-    <header className="lg:px-20 md:px-12 bg-light-grey sticky z-30 top-0 w-screen flex justify-center py-6 px-6">
+    <header
+      className={`lg:px-20 md:px-12 sticky z-30 top-0 w-screen flex justify-center py-6 px-6 transition-colors duration-300 ${
+        isScrolled ? "bg-white shadow-md" : "bg-light-grey"
+      }`}
+    >
       <nav className="flex max-w-[1120px] w-full justify-between text-[20px] items-center ">
         {/* LOGO */}
         <Link className="flex items-center cursor-pointer" to="/">

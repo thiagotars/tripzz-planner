@@ -9,12 +9,10 @@ export const generateDate = (
 
   let daysArray = [];
 
-  // get prefix days
   for (let i = 0; i < firstOfMonth.day(); i++) {
     daysArray.push({ currentMonth: false, date: firstOfMonth.day(i) });
   }
 
-  // get currentMonth days
   for (let i = firstOfMonth.date(); i <= lastOfMonth.date(); i++) {
     daysArray.push({
       currentMonth: true,
@@ -27,7 +25,6 @@ export const generateDate = (
 
   let remainingDays = 42 - daysArray.length;
 
-  // get suffix days
   for (
     let i = lastOfMonth.date();
     i < lastOfMonth.date() + remainingDays;

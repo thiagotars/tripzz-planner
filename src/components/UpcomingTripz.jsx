@@ -5,7 +5,6 @@ import CityCard from "./CityCard";
 const UpcomingTripz = ({ upcomingTrips, userId, onTripDeleted }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  // Update isExpanded based on the length of upcomingTrips
   useEffect(() => {
     if (upcomingTrips.length > 0) {
       setIsExpanded(true);

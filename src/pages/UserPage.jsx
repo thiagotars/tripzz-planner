@@ -14,8 +14,8 @@ const UserPage = () => {
 
   const fetchUserData = async () => {
     try {
-      const response = await api.get(`/api/v1/user/${user.id}`);
-
+      const response = await api.get(`/api/v1/user/${user._id}`);
+      console.log(response.data);
       const userData = response.data;
       setUser(userData); // Set user context with fetched data
     } catch (error) {
@@ -42,7 +42,7 @@ const UserPage = () => {
   const handleTripDeleted = async () => {
     await fetchUserTrips(); // Refetch trips after deletion
   };
-  console.log(user);
+
   return (
     <>
       <div className="absolute top-0 w-screen h-[484px] bg-light-grey -z-10"></div>

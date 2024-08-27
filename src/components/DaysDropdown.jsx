@@ -99,11 +99,9 @@ const DaysDropdown = ({ place, setLocalPlace }) => {
       setLocalPlace(updatedPlace);
       setIsOpen(false);
 
-      // Send PATCH request to update the backend
       await api.patch(`/api/v1/places/${place._id}`, { dateTime: newDate });
 
       setTripData((prevTripData) => {
-        // Update the places array
         const updatedPlaces = prevTripData.places.map((p) =>
           p._id === place._id ? updatedPlace : p
         );
@@ -142,7 +140,7 @@ const DaysDropdown = ({ place, setLocalPlace }) => {
         };
       });
 
-      console.log(tripData);
+      // console.log(tripData);
     } catch (error) {
       console.error("Error updating place list:", error);
     } finally {

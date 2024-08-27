@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { generateDate, months } from "../utils/calendar";
+import { months } from "../utils/calendar";
 import { cn } from "../utils/cn";
 import React, { useState, useEffect, useRef } from "react";
 import { GrFormNext, GrFormPrevious } from "react-icons/gr";
@@ -20,7 +20,6 @@ function Calendar({
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (calendarRef.current && !calendarRef.current.contains(event.target)) {
-        // Clicked outside the calendar, close it
         setIsStartDateOpen(false);
         setIsEndDateOpen(false);
       }
@@ -33,7 +32,7 @@ function Calendar({
   }, [setIsStartDateOpen, setIsEndDateOpen]);
 
   const handleDateSelect = (date) => {
-    onDateSelect(date); // Call parent's callback function with selected date
+    onDateSelect(date);
     setSelectedDate(date);
     setIsStartDateOpen(false);
     setIsEndDateOpen(false);

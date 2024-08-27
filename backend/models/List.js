@@ -42,12 +42,12 @@ const ListSchema = new mongoose.Schema({
   //     ref: "Event",
   //   },
   // ],
-  // places: [
-  //   {
-  //     type: mongoose.Schema.Types.ObjectId,
-  //     ref: "Place",
-  //   },
-  // ],
+  places: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Place",
+    },
+  ],
 });
 
 module.exports = mongoose.model("List", ListSchema);

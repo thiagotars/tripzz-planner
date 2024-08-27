@@ -31,10 +31,10 @@ const DateCalendar = ({ date }) => {
   };
 
   return (
-    <button className="flex items-start h-14 bg-white rounded-lg text-very-dark-grey">
+    <button className="flex p-1 items-start h-14 bg-white rounded-lg text-very-dark-grey">
       <div className="flex flex-col justify-center w-14 h-full rounded-lg ">
         {date && (
-          <>
+          <div className="flex flex-col gap-1">
             <h1 className="text-center sm:text-[.875em] text-[.75em] font-semibold">
               {date.getUTCDate() + getOrdinalSuffix(date.getUTCDate())}
             </h1>
@@ -42,7 +42,7 @@ const DateCalendar = ({ date }) => {
               <p>{months[date.getMonth()]}</p>
               <p>{date.getFullYear()}</p>
             </div>
-          </>
+          </div>
         )}
       </div>
     </button>

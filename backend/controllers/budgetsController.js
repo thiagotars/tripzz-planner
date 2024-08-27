@@ -15,7 +15,7 @@ const getBudget = async (req, res) => {
 };
 
 const updateBudget = async (req, res) => {
-  console.log(req.body);
+  // console.log(req.body);
   try {
     const { maxBudget } = req.body;
     const { tripId } = req.params;
@@ -32,7 +32,6 @@ const updateBudget = async (req, res) => {
       budget.maxBudget = maxBudget;
     }
 
-    // Save the updated budget
     await budget.save();
 
     res

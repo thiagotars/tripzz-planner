@@ -8,7 +8,7 @@ import { useAuth } from "../AuthProvider"; // Adjust the import path as necessar
 
 const SearchPlace = ({ fetchUserTrips }) => {
   const { user } = useAuth(); // Use the useAuth hook to access user
-
+  console.log(user);
   const initialTripState = {
     createdBy: user._id,
     destination: {
@@ -26,7 +26,6 @@ const SearchPlace = ({ fetchUserTrips }) => {
       geometry: "",
       place_id: "",
       continents: "",
-      capital: "",
       timezones: "",
     },
     startDate: null,
@@ -67,13 +66,8 @@ const SearchPlace = ({ fetchUserTrips }) => {
   };
 
   const fetchPlaceDetails = async (placeId) => {
-    setIsLoadingCityDetails(true); // Start loading indicator
+    setIsLoadingCityDetails(true);
     try {
-      // if (!token) {
-      //   console.error("No token found");
-      //   return null;
-      // }
-
       const response = await api.get(`/api/v1/fetchPlaces/details`, {
         params: {
           placeId: placeId,
@@ -83,15 +77,15 @@ const SearchPlace = ({ fetchUserTrips }) => {
       return response.data.result;
     } catch (error) {
       console.error("Error fetching place details:", error);
-      // Handle error as needed
+
       throw error;
     } finally {
-      setIsLoadingCityDetails(false); // Stop loading indicator
+      setIsLoadingCityDetails(false);
     }
   };
 
   const fetchPopulationData = async (city, country) => {
-    console.log("Fetching population data for:", city, country);
+    // console.log("Fetching population data for:", city, country);
     try {
       const response = await fetch(
         `http://api.geonames.org/searchJSON?q=${city}&country=&maxRows=1&username=thiagotarsitano`
@@ -104,7 +98,7 @@ const SearchPlace = ({ fetchUserTrips }) => {
       const data = await response.json();
       if (data.geonames && data.geonames.length > 0) {
         const population = data.geonames[0].population;
-        console.log("Population data:", population);
+        // console.log("Population data:", population);
         return population;
       } else {
         console.error("No population data found for:", city, country);
@@ -127,7 +121,7 @@ const SearchPlace = ({ fetchUserTrips }) => {
       }
       const data = await response.json();
       const countryData = data[0];
-      console.log(countryData);
+      // console.log(countryData);
 
       const formattedCurrency = Object.keys(countryData.currencies || {}).map(
         (code) => {
@@ -139,7 +133,7 @@ const SearchPlace = ({ fetchUserTrips }) => {
           };
         }
       );
-      console.log(formattedCurrency);
+      // console.log(formattedCurrency);
       return {
         language: Object.values(countryData.languages)[0],
         currency: formattedCurrency,
@@ -175,7 +169,6 @@ const SearchPlace = ({ fetchUserTrips }) => {
     const tempElement = document.createElement("div");
     tempElement.innerHTML = address;
 
-    // Extract the locality and country-name
     const localityElement = tempElement.querySelector(".locality");
     const countryElement = tempElement.querySelector(".country-name");
 
@@ -186,7 +179,7 @@ const SearchPlace = ({ fetchUserTrips }) => {
   };
 
   const handleSuggestionSelect = async (suggestion) => {
-    console.log(suggestion);
+    // console.log(suggestion);
     setSuggestions([]);
     const placeDetails = await fetchPlaceDetails(suggestion.place_id);
 
@@ -202,6 +195,7 @@ const SearchPlace = ({ fetchUserTrips }) => {
 
     setNewTrip((prevState) => ({
       ...prevState,
+      createdBy: user._id,
       destination: {
         city: fetchedCity || placeDetails.name,
         country: country,
@@ -235,15 +229,15 @@ const SearchPlace = ({ fetchUserTrips }) => {
 
     if (newTrip.endDate <= newTrip.startDate) {
       setErrorMessage("End date must be after start date.");
-      return; // Added return here to stop further execution
+      return;
     }
 
-    setIsCreatingTrip(true); // Start creating trip loading indicator
+    setIsCreatingTrip(true);
 
     try {
       const response = await api.post("/api/v1/trips", newTrip);
 
-      console.log("Trip created:", response.data);
+      // console.log("Trip created:", response.data);
       fetchUserTrips();
       resetForm();
     } catch (error) {
@@ -258,7 +252,7 @@ const SearchPlace = ({ fetchUserTrips }) => {
         setErrorMessage("Error in request setup.");
       }
     } finally {
-      setIsCreatingTrip(false); // Stop creating trip loading indicator
+      setIsCreatingTrip(false);
     }
   };
 

@@ -1,16 +1,14 @@
 import {
-  FaPlus,
   FaChevronDown,
   FaChevronRight,
   FaSpinner,
   FaRegTrashAlt,
 } from "react-icons/fa";
 import ExpenseTypeDropdown from "../../components/ExpenseTypeDropdown";
-import { useOutletContext, useParams } from "react-router-dom";
+import { useOutletContext } from "react-router-dom";
 import { useState, useEffect } from "react";
 import api from "../../utils/api";
 import BudgetSummary from "../../components/BudgetSummary";
-import React from "react";
 import { useAuth } from "../../AuthProvider";
 import { clearErrorMessage } from "../../utils/clearErrorMessage";
 
@@ -205,7 +203,7 @@ const Budget = () => {
     );
 
   return (
-    <main className="w-[50rem] sm:px-0 px-6">
+    <main className="w-[50rem] md:px-0 px-6">
       <BudgetSummary />
       <div className="mt-12 mb-28 w-full flex sm:flex-row flex-col">
         <div className="flex flex-col w-full sm:w-1/2 px-6 sm:px-10 py-8 bg-light-grey rounded-[1.25rem]">
