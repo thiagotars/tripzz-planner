@@ -42,9 +42,12 @@ app.use(helmet());
 
 app.use(
   cors({
-    origin: "https://tripzz-travel-planner.vercel.app",
+    origin: "*",
     methods: "GET,POST,PUT,DELETE",
     credentials: true,
+    allowedHeaders: "Content-Type,Authorization",
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
   })
 );
 
