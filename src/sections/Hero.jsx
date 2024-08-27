@@ -1,5 +1,5 @@
 import React from "react";
-
+import Logo from "../assets/Background.svg";
 const Hero = () => {
   return (
     <section className="sm:h-[40rem] xs:h-[32rem] h-[30rem] overflow-hidden relative w-screen bg-light-grey">
@@ -23,7 +23,7 @@ const Hero = () => {
 
         <img
           className="absolute md:left-[40%] left-0 md:top-[30%] sm:top-[60%] xs:top-[60%] top-[70%] flex justify-center items-center"
-          src="src/assets/Background.svg"
+          src={Logo}
           alt="background image"
         />
       </main>
