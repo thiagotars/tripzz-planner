@@ -8,7 +8,7 @@ import { useAuth } from "../AuthProvider"; // Adjust the import path as necessar
 
 const SearchPlace = ({ fetchUserTrips }) => {
   const { user } = useAuth(); // Use the useAuth hook to access user
-  console.log(user);
+  // console.log(user);
   const initialTripState = {
     createdBy: user._id,
     destination: {
@@ -50,7 +50,7 @@ const SearchPlace = ({ fetchUserTrips }) => {
     if (input.length > 2) {
       try {
         const response = await fetch(
-          `/maps/api/place/autocomplete/json?input=${input}&key=${
+          `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${input}&key=${
             import.meta.env.VITE_GOOGLE_API_KEY
           }&language=en`
         );
