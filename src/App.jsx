@@ -29,9 +29,7 @@ function App() {
     const token = localStorage.getItem("token");
     if (token) {
       api
-        .get("/api/v1/me", {
-          headers: { Authorization: `Bearer ${token}` },
-        })
+        .get("/api/v1/me")
         .then((response) => {
           setUser({
             ...response.data.user,

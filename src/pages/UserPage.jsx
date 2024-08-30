@@ -7,17 +7,16 @@ import UserTrips from "../components/UserTrips";
 import api from "../utils/api";
 
 const UserPage = () => {
-  const { user, setUser, token } = useAuth(); // Use the custom hook to access context
-  console.log(user);
-  // const { userId } = useParams();
+  const { user, setUser, token } = useAuth();
+  // console.log(user);
   const [userTrips, setUserTrips] = useState({ allTrips: [] });
 
   const fetchUserData = async () => {
     try {
       const response = await api.get(`/api/v1/user/${user._id}`);
-      console.log(response.data);
+      // console.log(response.data);
       const userData = response.data;
-      setUser(userData); // Set user context with fetched data
+      setUser(userData);
     } catch (error) {
       console.error("Error fetching user data:", error);
     }
@@ -35,12 +34,12 @@ const UserPage = () => {
   };
 
   useEffect(() => {
-    fetchUserData(); // Fetch user data on initial component mount
-    fetchUserTrips(); // Fetch trips on initial component mount
-  }, []); // Empty dependency array to run effect once on mount
+    fetchUserData();
+    fetchUserTrips();
+  }, []);
 
   const handleTripDeleted = async () => {
-    await fetchUserTrips(); // Refetch trips after deletion
+    await fetchUserTrips();
   };
 
   return (
