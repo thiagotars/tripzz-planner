@@ -106,9 +106,32 @@ const getPopularRestaurants = async (req, res) => {
   }
 };
 
+const getAutocompleteSuggestions = async (req, res) => {
+  const { input } = req.query;
+  const apiKey = process.env.GOOGLE_API_KEY;
+
+  try {
+    const response = await axios.get(
+      "https://maps.googleapis.com/maps/api/place/autocomplete/json",
+      {
+        params: {
+          input: input,
+          key: apiKey,
+          language: "en",
+        },
+      }
+    );
+
+    res.json(response.data);
+  } catch (error) {
+    console.error("Error fetching autocomplete suggestions:", error.message);
+    res.status(500).json({ error: "Failed to fetch autocomplete suggestions" });
+  }
+};
 module.exports = {
   getPlaces,
   getPlaceDetails,
   getPopularPlaces,
   getPopularRestaurants,
+  getAutocompleteSuggestions,
 };

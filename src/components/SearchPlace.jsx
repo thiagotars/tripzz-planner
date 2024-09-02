@@ -42,6 +42,7 @@ const SearchPlace = ({ fetchUserTrips }) => {
 
   const handleDestinationChange = async (event) => {
     const input = event.target.value;
+
     setNewTrip((prevState) => ({
       ...prevState,
       destination: { ...prevState.destination, city: input },
@@ -50,15 +51,18 @@ const SearchPlace = ({ fetchUserTrips }) => {
     if (input.length > 2) {
       try {
         const response = await fetch(
-          `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${input}&key=${
-            import.meta.env.VITE_GOOGLE_API_KEY
-          }&language=en`
+          `/api/v1/fetchPlaces/autocomplete?input=${input}`
         );
-
         const data = await response.json();
-        setSuggestions(data.predictions);
+
+        if (data.predictions) {
+          setSuggestions(data.predictions);
+        } else {
+          setSuggestions([]);
+        }
       } catch (error) {
         console.error("Error fetching place suggestions:", error);
+        setSuggestions([]);
       }
     } else {
       setSuggestions([]);
