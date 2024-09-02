@@ -2,7 +2,7 @@ require("dotenv").config();
 require("express-async-errors");
 const cookieParser = require("cookie-parser");
 
-// extra security packs
+// Extra security packs
 const helmet = require("helmet");
 const cors = require("cors");
 const xss = require("xss-clean");
@@ -11,11 +11,11 @@ const rateLimiter = require("express-rate-limit");
 const express = require("express");
 const app = express();
 
-//connect DB
+// Connect DB
 const connectDB = require("./db/connect");
 const authenticateUser = require("./middleware/auth");
 
-//routers
+// Routers
 const authRouter = require("./routes/auth");
 const userRouter = require("./routes/user");
 const tripsRouter = require("./routes/trips");
@@ -24,10 +24,24 @@ const meRouter = require("./routes/me");
 const refreshTokenRouter = require("./routes/refreshToken");
 const placesRouter = require("./routes/places");
 
-//error handlers
+// Error handlers
 const notFoundMiddleware = require("./middleware/not-found");
 const errorHandlerMiddleware = require("./middleware/error-handler");
 
+// CORS options
+const corsOptions = {
+  origin: "https://tripzz-travel-planner.vercel.app",
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
+};
+
+// Apply middlewares
+app.use(cors(corsOptions));
+app.use(express.json());
+app.use(cookieParser());
+app.use(helmet());
+app.use(xss());
 app.use(
   rateLimiter({
     windowMs: 15 * 60 * 1000,
@@ -36,24 +50,8 @@ app.use(
     legacyHeaders: false,
   })
 );
-app.use(express.json());
-app.use(cookieParser());
-app.use(helmet());
 
-const corsOptions = {
-  origin: "https://tripzz-travel-planner.vercel.app",
-  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true,
-};
-
-app.use(cors(corsOptions));
-
-app.options("*", cors(corsOptions));
-
-app.use(xss());
-
-//routes
+// Routes
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/user", authenticateUser, userRouter);
 app.use("/api/v1/trips", authenticateUser, tripsRouter);
@@ -62,6 +60,7 @@ app.use("/api/v1/places", authenticateUser, placesRouter);
 app.use("/api/v1/me", authenticateUser, meRouter);
 app.use("/api/v1/refreshToken", authenticateUser, refreshTokenRouter);
 
+// Error handling
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
 
