@@ -50,7 +50,7 @@ const SearchPlace = ({ fetchUserTrips }) => {
 
     if (input.length > 2) {
       try {
-        const response = await fetch(
+        const response = await api.get(
           `/api/v1/fetchPlaces/autocomplete?input=${input}`
         );
         const data = await response.json();
