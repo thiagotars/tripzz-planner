@@ -29,7 +29,7 @@ const Carousel = ({ days, tripData }) => {
   }
 
   const tripDays = days.map((day, index) => {
-    console.log(day);
+    // console.log(day);
     const daysOfWeek = [
       "Sunday",
       "Monday",

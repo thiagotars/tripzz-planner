@@ -104,7 +104,6 @@ const Itinerary = () => {
     if (!selectedPlace) return;
 
     try {
-      // Create a new Date object from dayItem.date and set time to 00:00
       const date = new Date(dayItem.date);
       date.setHours(0, 0, 0, 0);
 
@@ -282,7 +281,7 @@ const Itinerary = () => {
         {openDay[day._id] && (
           <div className="relative flex gap-6 flex-col sm:flex-row sm:justify-end items-end sm:items-start mt-16">
             {searchResults[day._id]?.length > 0 && (
-              <ul className="absolute top-16 overflow-y-auto max-h-96 rounded-lg py-2 w-full md:w-[25rem] shadow-md bg-white">
+              <ul className="absolute z-20 top-16 overflow-y-auto max-h-96 rounded-lg py-2 w-full md:w-[25rem] shadow-md bg-white">
                 {searchResults[day._id].map((result) => (
                   <li
                     key={result.place_id}

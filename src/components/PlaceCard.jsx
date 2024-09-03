@@ -28,8 +28,8 @@ const PlaceCard = ({
 
   useEffect(() => {}, [place]);
   // console.log(isTimeSet);
-  console.log(place);
-  console.log(tripData);
+  // console.log(place);
+  // console.log(tripData);
 
   useEffect(() => {
     setIsTimeSet(!!place.dateTime);

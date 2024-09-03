@@ -29,15 +29,29 @@ const notFoundMiddleware = require("./middleware/not-found");
 const errorHandlerMiddleware = require("./middleware/error-handler");
 
 // CORS options
-const corsOptions = {
-  origin: "https://tripzz-travel-planner.vercel.app",
-  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true,
-};
+// const allowedOrigins = [
+//   "https://tripzz-travel-planner.vercel.app", // Production origin
+//   "http://localhost:5173", // Development origin
+// ];
+
+// const corsOptions = {
+//   origin: (origin, callback) => {
+//     // Allow requests with no origin (like mobile apps or CURL requests)
+//     if (!origin) return callback(null, true);
+
+//     if (allowedOrigins.includes(origin)) {
+//       callback(null, true); // Origin is allowed
+//     } else {
+//       callback(new Error("Not allowed by CORS")); // Origin is not allowed
+//     }
+//   },
+//   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+//   allowedHeaders: ["Content-Type", "Authorization"],
+//   credentials: true,
+// };
 
 // Apply middlewares
-app.use(cors(corsOptions));
+app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 app.use(helmet());

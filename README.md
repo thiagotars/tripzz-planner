@@ -90,6 +90,7 @@ Example .env files:
 
 VITE_GOOGLE_API_KEY=YOUR_GOOGLE_API_KEY
 VITE_UNSPLASH_ACCESS_KEY=YOUR_UNSPLASH_ACCESS_KEY
+VITE_NODE_ENV = development
 
 /tripzz-planner/backend/.env:
 
@@ -97,6 +98,7 @@ MONGO_URI=YOUR_MONGODB_CONNECTION_STRING
 JWT_SECRET=YOUR_JWT_SECRET
 JWT_LIFETIME=YOUR_JWT_LIFETIME
 GOOGLE_API_KEY=YOUR_GOOGLE_API_KEY
+NODE_ENV = development
 
 **Remember to replace the placeholders with your actual values.**
 

@@ -42,6 +42,7 @@ const SearchPlace = ({ fetchUserTrips }) => {
 
   const handleDestinationChange = async (event) => {
     const input = event.target.value;
+    console.log(input);
 
     setNewTrip((prevState) => ({
       ...prevState,
@@ -53,8 +54,9 @@ const SearchPlace = ({ fetchUserTrips }) => {
         const response = await api.get(
           `/api/v1/fetchPlaces/autocomplete?input=${input}`
         );
-        const data = await response.json();
 
+        const data = response.data;
+        console.log(data);
         if (data.predictions) {
           setSuggestions(data.predictions);
         } else {
