@@ -30,7 +30,7 @@ const errorHandlerMiddleware = require("./middleware/error-handler");
 
 // CORS options
 const allowedOrigins = [
-  "https://tripzz-travel-planner.vercel.app/",
+  "https://tripzz-travel-planner.vercel.app",
   "http://127.0.0.1:5173",
 ];
 
